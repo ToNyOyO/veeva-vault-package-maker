@@ -7,7 +7,7 @@
 > 
 >As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 
-## Getting started...
+## Quick start...
 - `npm install`
 - `gulp setup`
 - Fill out `config.json`
@@ -16,18 +16,6 @@
   - `gulp createKeyMessage --page --shared`
 - Then start creating your pages: 
   - `gulp createKeyMessage --page "Page Name"`
-
-### What does it do, *specifically?* 
-
-```
-$ gulp setup
-```
-- Template a `config.json` for your project defaults
-- Add a `.gitignore` file
-- Template the LESS files in `shared`>`css`
-- Template the JS files in `shared`>`js`
-- Create a `build` folder for Vault content ZIPs
-- Create a `previews` folder for thumbs and posters
 
 ## File structure
 
@@ -70,6 +58,17 @@ $ gulp generateVaultCsv                       Generates a Veeva Vault MC Loader 
 ```
 
 ### In depth
+
+```
+$ gulp setup
+```
+- Template a `config.json` for your project defaults
+- Add a `.gitignore` file
+- Template the LESS files in `shared`>`css`
+- Template the JS files in `shared`>`js`
+- Create a `build` folder for Vault content ZIPs
+- Create a `previews` folder for thumbs and posters
+
 
 ```
 $ gulp createKeyMessage --page --pres

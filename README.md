@@ -17,6 +17,10 @@
 - Then start creating your pages: 
   - `gulp createKeyMessage --page "Page Name"`
 
+## Options and settings
+### *Amend the config file!*
+Fill in the required information in the new `config.json` or **nothing will work!** 
+
 ## File structure
 
 ```
@@ -40,10 +44,6 @@ root/
 |—— key.html
 |—— messages.html
 ```
-
-## Options and settings
-### *Amend the config file!*
-Fill in the required information in the new `config.json` or **nothing will work!** 
 
 ## Gulp Tasks and Workflow
 

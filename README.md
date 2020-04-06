@@ -53,12 +53,17 @@ As above but DIY..
 - Combine LESS files, minify css and minify JS
 
 #### gulp build
-- Packages all the project files ready for upload to Vault
+- Packages all the project files into the `./build` folder ready for upload to Vault
 - This means: 
-  - ZIP all the shared resources
-  - Package each Key Message in it's own ZIP with it's thumb and poster
+  - Pull all the shared resources (CSS, JS, Fonts, Images) into a ZIP and place into the `./build` folder
+  - Package each Key Message in it's own ZIP, along with it's thumb and poster images, and place in the `./build` folder
   
 *ToDo: Use the Key Messages JSON file instead of the HTML files in the root!!* 
 
 #### gulp generateVaultCsv
 - Uses the Key Message JSON files to generate a Vault CM Loader file (this will appear in the `./build` folder)
+
+## And now? 
+- Chuck the CSV file in the `./build` folder at the Valut CM Loader and watch it successfully get verified
+- Upload your ZIP files from the `./build` folder 
+- Sit back and relax 

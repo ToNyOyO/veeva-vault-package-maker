@@ -5,7 +5,7 @@
 ## What does it do?  
 >This will create the project structure based on the idea of using Shared Resources, and using a pre-defined template structure. 
 > 
->As long as all your LESS files are imported into default.less and your JS files are in ./shared/js they will be packaged correctly. 
+>As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 
 ## Getting started...
 - `npm install`
@@ -54,6 +54,22 @@ root/
 Fill in the required information in the new `config.json` or **nothing will work!** 
 
 ## Gulp Tasks and Workflow
+
+### Overview
+```
+TASKS
+_________________________________________________________________________
+$ gulp                                        Default task that kicks off development mode
+$ gulp setup                                  Setup folders and config.json
+$ gulp createKeyMessage --page --pres         Create CLM Presentation json file
+$ gulp createKeyMessage --page --shared       Create CLM Pres shared resources json file
+$ gulp createKeyMessage --page "page name"    Add a Key Message to the project
+$ gulp dev                                    Stage task
+$ gulp build                                  Deploy task
+$ gulp generateVaultCsv                       Generates a Veeva Vault MC Loader .CSV file
+```
+
+### In depth
 
 ```
 $ gulp createKeyMessage --page --pres

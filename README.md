@@ -35,6 +35,10 @@ root/
 |—— config.json
 |—— gulfile.js
 |—— package.json
+|
+|—— your.html
+|—— key.html
+|—— messages.html
 ```
 
 ## Options and settings

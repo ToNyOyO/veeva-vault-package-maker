@@ -1,0 +1,195 @@
+@import "colors.less";
+@import "fonts.less";
+
+// regular
+
+@font-face {
+  font-family: 'museo-sans';
+  src: url('../fonts/museo-sans.woff2') format('woff2'),
+  url('../fonts/museo-sans.woff') format('woff');
+  font-display:auto;
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'museo-sans-italic';
+  src: url('../fonts/museo-sans-italic.woff2') format('woff2'),
+  url('../fonts/museo-sans-italic.woff') format('woff');
+  font-display:auto;
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'museo-sans-semi-bold';
+  src: url('../fonts/museo-sans-semi-bold.woff2') format('woff2'),
+  url('../fonts/museo-sans-semi-bold.woff') format('woff');
+  font-display:auto;
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'museo-sans-semi-bold-italic';
+  src: url('../fonts/museo-sans-semi-bold-italic.woff2') format('woff2'),
+  url('../fonts/museo-sans-semi-bold-italic.woff') format('woff');
+  font-display:auto;
+  font-weight: 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'museo-sans-bold';
+  src: url('../fonts/museo-sans-bold.woff2') format('woff2'),
+  url('../fonts/museo-sans-bold.woff') format('woff');
+  font-display:auto;
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'museo-sans-bold-italic';
+  src: url('../fonts/museo-sans-bold-italic.woff2') format('woff2'),
+  url('../fonts/museo-sans-bold-italic.woff') format('woff');
+  font-display:auto;
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'museo-sans-extra-bold';
+  src: url('../fonts/museo-sans-extra-bold.woff2') format('woff2'),
+  url('../fonts/museo-sans-extra-bold.woff') format('woff');
+  font-display:auto;
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'museo-sans-extra-bold-italic';
+  src: url('../fonts/museo-sans-extra-bold-italic.woff2') format('woff2'),
+  url('../fonts/museo-sans-extra-bold-italic.woff') format('woff');
+  font-display:auto;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.extra-bold {
+  font-family: 'museo-sans-extra-bold';
+}
+
+////////////////////////////////////////////////////////////////////
+// headers etc.
+
+h1, h2, h3, h4, h5 {
+  font-family: 'museo-sans-bold';
+  //text-transform: uppercase;
+}
+
+body, p, li, a, u, td {
+  font-family: 'museo-sans';
+  font-size: 1.1rem;
+
+  &.mb0 {
+    margin-bottom:0;
+  }
+  &.mt0 {
+    margin-top:0;
+  }
+
+  &.mb1 {
+    margin-bottom: 0.5rem;
+  }
+  &.mt1 {
+    margin-top: 0.5rem;
+  }
+}
+
+ul {
+  &.mb0 {
+    margin-bottom:0;
+  }
+  &.mt0 {
+    margin-top:0;
+  }
+
+  &.mb1 {
+    margin-bottom: 0.5rem;
+  }
+  &.mt1 {
+    margin-top: 0.5rem;
+  }
+}
+
+td {
+  font-size: 0.95rem;
+}
+
+th {
+  //letter-spacing: 0.08rem;
+}
+
+small {
+  display: block;
+  font-size: 0.6rem;
+  line-height: 0.7rem;
+}
+
+ol {
+  li {
+    //font-family: 'museo-sans-bold';
+
+    span {
+      font-family: 'museo-sans';
+    }
+  }
+}
+
+b, strong, th {
+  font-family: 'museo-sans-bold';
+}
+
+em, i {
+  font-family: 'museo-sans-italic';
+}
+
+h1 {
+  color: @tertiary;
+  font-size: 1.88rem;
+
+  sup {
+    font-size: 0.9rem;
+  }
+}
+
+h2 {
+  color: @primary;
+  font-size: 1.38rem;
+
+  margin-top: 2.4rem;
+
+  sup {
+    font-size: 0.7rem;
+  }
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+h3, h4 {
+  color: @primary;
+  font-size: 1.1rem;
+
+  margin-top: 1.22rem;
+
+  sup {
+    font-size: 0.5rem;
+  }
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+p, li, th, td {
+  color: @font-color;
+
+  sup {
+    font-size: 52%;
+  }
+}

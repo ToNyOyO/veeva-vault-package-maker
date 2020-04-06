@@ -64,6 +64,6 @@ As above but DIY..
 - Uses the Key Message JSON files to generate a Vault CM Loader file (this will appear in the `./build` folder)
 
 ## And now? 
-- Chuck the CSV file in the `./build` folder at the Valut CM Loader and watch it successfully get verified
-- Upload your ZIP files from the `./build` folder 
+- Chuck the CSV file, found in the `./build` folder, at the Vault CM Loader and watch it successfully get verified
+- Upload your ZIP files from the `./build` folder too
 - Sit back and relax 

@@ -18,7 +18,7 @@
 - Then start creating your pages: 
   - Run `gulp keymessage --new "Key Message Name"` for each Key Message
 
-## Options and settings
+## Settings
 ### *Amend the config file!*
 Fill in the required information in the new `config.json` or **nothing will work!** (the dates are optional everything else is required).
 

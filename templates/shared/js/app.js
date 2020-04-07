@@ -1,21 +1,21 @@
 $(function() {
 
     // PUBLISH
-    var isPublished = false;
+    const isPublished = false;
 
     // links
-    var pagesLink = $('.pages-link');
-    var refsLink = $('.refs-link');
-    var piLink = $('.pi-link');
+    const pagesLink = $('.pages-link');
+    const refsLink = $('.refs-link');
+    const piLink = $('.pi-link');
 
     // page elements
-    var refsOverlay = $('#refs-overlay');
-    var references = $('#references');
-    var refCloseBtn = $('.ref-close-button');
+    const refsOverlay = $('#refs-overlay');
+    const references = $('#references');
+    const refCloseBtn = $('.ref-close-button');
 
-    var popupOverlay = $('#popup-overlay');
-    var popup = $('.popup-link');
-    var popCloseBtn = $('.pop-close-button');
+    const popupOverlay = $('#popup-overlay');
+    const popup = $('.popup-link');
+    const popCloseBtn = $('.pop-close-button');
 
     /******************************************************************************
      * References link (toggle)
@@ -35,7 +35,7 @@ $(function() {
     popup.on('click', function (e) {
         e.preventDefault();
 
-        var popupId = $(this).attr('data-popup-id');
+        let popupId = $(this).attr('data-popup-id');
 
         popupOverlay.addClass('show');
         $('body').find('#'+popupId).addClass('show');
@@ -172,7 +172,7 @@ $(function() {
 (function($) {
     $.fn.animateNumbers = function(start, stop, commas, duration, delay, ease) {
         return this.each(function() {
-            var $this = $(this);
+            let $this = $(this);
             start = (start !== null) ? start : parseInt($this.text().replace(/,/g, "")) ;
             commas = (commas === undefined) ? true : commas;
             delay = (delay === undefined) ? 0 : delay;

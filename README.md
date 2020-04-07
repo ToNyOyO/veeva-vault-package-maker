@@ -19,7 +19,19 @@
 
 ## Options and settings
 ### *Amend the config file!*
-Fill in the required information in the new `config.json` or **nothing will work!** 
+Fill in the required information in the new `config.json` or **nothing will work!** (the dates are optional everything else is required).
+
+```
+{
+    "presentationName": "",
+    "externalId": "",
+    "presentationStartDate": "",
+    "presentationEndDate": "",
+    "productName": "",
+    "countryName": "",
+    "sharedResourceExternalId": ""
+}
+```
 
 ## File structure
 

@@ -103,7 +103,7 @@ The Vault CM Loader requires that the Shared Resources be part of the CVS file a
 ```
 $ gulp keymessage --new "Key Message name"
 ```
-- Creates the shared resources Key Message JSON file for use in the Vault CM Loader .csv file 
+- Creates the Key Message JSON file for use in the Vault CM Loader .csv file 
 - Creates the Key Message HTML file at root 
 - Creates template thumb and poster images in the `previews` folder
 - Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (you'll need to add a link into `default.less`)

@@ -73,86 +73,86 @@ $(function() {
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Homepage.zip', '');
+                com.veeva.clm.gotoSlide('Homepage.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Homepage.html';
+                document.location.href = 'Homepage.html';
             }
         }
     });
-    $('.goTo-vWD').on('click', function(e) {
+    $('.goTo-KeyMessage1').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-vWD.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage1.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-vWD.html';
+                document.location.href = 'KeyMessage1.html';
             }
         }
     });
-    $('.goTo-Product').on('click', function(e) {
+    $('.goTo-KeyMessage2').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-VEYVONDI.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage2.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-VEYVONDI.html';
+                document.location.href = 'KeyMessage2.html';
             }
         }
     });
-    $('.goTo-Dosing').on('click', function(e) {
+    $('.goTo-KeyMessage3').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Independent-dosing.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage3.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Independent-dosing.html';
+                document.location.href = 'KeyMessage3.html';
             }
         }
     });
-    $('.goTo-OnDemand').on('click', function(e) {
+    $('.goTo-KeyMessage4').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-On-demand.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage4.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-On-demand.html';
+                document.location.href = 'KeyMessage4.html';
             }
         }
     });
-    $('.goTo-Surgery').on('click', function(e) {
+    $('.goTo-KeyMessage5').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Surgery.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage5.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Surgery.html';
+                document.location.href = 'KeyMessage5.html';
             }
         }
     });
-    $('.goTo-Storage').on('click', function(e) {
+    $('.goTo-KeyMessage6').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Storage.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage6.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Storage.html';
+                document.location.href = 'KeyMessage6.html';
             }
         }
     });
-    $('.goTo-Safety').on('click', function(e) {
+    $('.goTo-KeyMessage7').on('click', function(e) {
         e.preventDefault();
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Safety.zip', '');
+                com.veeva.clm.gotoSlide('KeyMessage7.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Safety.html';
+                document.location.href = 'KeyMessage7.html';
             }
         }
     });
@@ -161,9 +161,9 @@ $(function() {
 
         if (!$(this).hasClass('active') || ($(this).hasClass('active') && $(this).hasClass('allow'))) {
             if (isPublished) {
-                com.veeva.clm.gotoSlide('VEYVONDI-Summary.zip', '');
+                com.veeva.clm.gotoSlide('Summary.zip', '');
             } else {
-                document.location.href = 'VEYVONDI-Summary.html';
+                document.location.href = 'Summary.html';
             }
         }
     });

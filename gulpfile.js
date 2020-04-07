@@ -41,8 +41,11 @@ try {
 
 function defaultTask(cb) {
     if ('presentationName' in config) {
-        gulp.watch(['./shared/css/*.less'], gulp.series(combineLess, minifyCss));
-        gulp.watch(['./shared/js/*.js', '!./shared/js/*.min.js'], minJs);
+        gulp.watch([
+            './shared/css/*.less',
+            './shared/js/*.js',
+            '!./shared/js/*.min.js'
+        ], dev).on('end', function() {console.log('test')});
     }
 
     cb();
@@ -210,67 +213,19 @@ function keymessage(cb) {
     cb();
 }
 
-function vaultcsv(cb) {
-
-    let loadedKMs = require('./keymessages.json');
-    let addHeaders = true;
-    let csvData = '';
-
-    for (const A of Object.entries(loadedKMs)) {
-        let km = A[0];
-        let allowKm = A[1];
-
-        if (allowKm) {
-
-            let dd = require('./keymessages/' + km.replace(/ /g, "-") + '.json');
-
-            if (addHeaders) {
-                csvData = Object.keys(dd).toString() + '\r\n';
-                addHeaders = false;
-            }
-            csvData += Object.values(dd).toString() + '\r\n';
-        }
-    }
-
-    // save to ./build/vault-cm-loader.csv
-    (async () => {
-        await write('./build/vault-cm-loader.csv', csvData);
-    })();
-
-    cb();
-}
-
-function combineLess(cb) {
+function dev(cb) {
     gulp.src('./shared/css/default.less')
         .pipe(sourcemaps.init())
         .pipe(less())
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./shared/css'));
+        .pipe(gulp.dest('./shared/css'))
+        .on('end', function() {
+            gulp.src('./shared/css/default.css')
+                .pipe(cleanCSS({compatibility: 'ie8'}))
+                .pipe(rename(function (path) {path.extname = '.min.css'}))
+                .pipe(gulp.dest('./shared/css'));
+        });
 
-    cb();
-}
-
-function minifyCss(cb) {
-    setTimeout(function () {
-        gulp.src('./shared/css/default.css')
-            .pipe(cleanCSS({compatibility: 'ie8'}))
-            .pipe(rename(function (path) {path.extname = '.min.css'}))
-            .pipe(gulp.dest('./shared/css'));
-    }, 500);
-
-    cb();
-}
-
-function copyCss(cb) {
-    setTimeout(function () {
-        gulp.src('./shared/css/default.min.css')
-            .pipe(gulp.dest('./build/TMP/shared/css'));
-    }, 750);
-
-    cb();
-}
-
-function minJs(cb) {
     gulp.src(['./shared/js/*.js', '!./shared/js/*.min.js'])
         .pipe(uglify())
         .pipe(rename(function (path) {path.extname = '.min.js'}))
@@ -279,78 +234,90 @@ function minJs(cb) {
     cb();
 }
 
-function copyJs(cb) {
+function build(cb) {
+
+    // copy js
     gulp.src('./shared/js/*.min.js')
         .pipe(gulp.dest('./build/TMP/shared/js'));
 
-    cb();
-}
-
-function copyFonts(cb) {
+    // copy fonts
     gulp.src('./shared/fonts/*')
         .pipe(gulp.dest('./build/TMP/shared/fonts'));
 
-    cb();
-}
-
-function copyImages(cb) {
+    // copy images
     gulp.src('./shared/imgs/*')
         .pipe(gulp.dest('./build/TMP/shared/imgs'));
 
-    cb();
-}
-
-function zipSharedFiles(cb) {
-    setTimeout(function () {
-        gulp.src('./build/TMP/shared/**')
-            .pipe(zip(config.presentationName.replace(/ /g, "-") + '-shared-resource.zip'))
-            .pipe(gulp.dest('./build'));
-
-        cb();
-    }, 1000);
-}
-
-function copyPreviewImages(cb) {
+    // copy preview images
     gulp.src('./previews/*/*')
         .pipe(gulp.dest('./build/TMP/keymessages'));
 
-    cb();
-}
-
-function copyHtmlFiles(cb) {
+    // copy html files
     setTimeout(function () {
-
         htmlFiles.forEach(function (htmlFile) {
-
             gulp.src(htmlFile)
                 .pipe(rename(function (path) {path.basename = 'index'}))
                 .pipe(gulp.dest('./build/TMP/keymessages/' + path.basename(htmlFile, '.html')));
         });
-
-        cb();
     }, 500);
-}
 
-function zipKeyMessages(cb) {
-
+    // copy css
     setTimeout(function () {
+        gulp.src('./shared/css/default.min.css')
+            .pipe(gulp.dest('./build/TMP/shared/css'));
+    }, 750);
 
+    // zip keymessages
+    setTimeout(function () {
         htmlFiles.forEach(function (htmlFile) {
-
             gulp.src( './build/TMP/keymessages/' + path.basename(htmlFile, '.html') + '/*' )
                 .pipe(zip(path.basename(htmlFile, '.html') + '.zip'))
                 .pipe(gulp.dest('./build'));
         });
+    }, 1500);
 
-        cb();
-    }, 1000);
-}
-
-function deleteTmpSharedFiles(cb) {
+    // zip shared files
     setTimeout(function () {
-        rimraf('./build/TMP', function () {  });
-        cb();
-    }, 2000);
+        gulp.src('./build/TMP/shared/**')
+            .pipe(zip(config.presentationName.replace(/ /g, "-") + '-shared-resource.zip'))
+            .pipe(gulp.dest('./build'))
+            .on('end', function() {
+                setTimeout(function () {
+                    rimraf('./build/TMP', function () {  });
+                    cb();
+                }, 2000);
+            });
+    }, 2250);
+
+    // make the Vault CM Loader csv
+    let loadedKMs = require('./keymessages.json');
+    let addHeaders = true;
+    let csvData = '';
+
+    setTimeout(function() {
+        for (const A of Object.entries(loadedKMs)) {
+            let km = A[0];
+            let allowKm = A[1];
+
+            if (allowKm) {
+
+                let dd = require('./keymessages/' + km.replace(/ /g, "-") + '.json');
+
+                if (addHeaders) {
+                    csvData = Object.keys(dd).toString() + '\r\n';
+                    addHeaders = false;
+                }
+                csvData += Object.values(dd).toString() + '\r\n';
+            }
+        }
+
+        // save to ./build/vault-cm-loader.csv
+        (async () => {
+            await write('./build/vault-cm-loader.csv', csvData);
+        })();
+    }, 1000);
+
+    cb();
 }
 
 
@@ -360,54 +327,9 @@ exports.setup = setup;
 
 exports.keymessage = keymessage;
 
-exports.vaultcsv = vaultcsv;
+exports.dev = dev;
 
-
-exports.combineLess = combineLess;
-
-exports.minifyCss = minifyCss;
-
-exports.copyCss = copyCss;
-
-exports.minJs = minJs;
-
-exports.copyJs = copyJs;
-
-exports.copyFonts = copyFonts;
-
-exports.copyImages = copyImages;
-
-exports.zipSharedFiles = zipSharedFiles;
-
-exports.copyPreviewImages = copyPreviewImages;
-
-exports.copyHtmlFiles = copyHtmlFiles;
-
-exports.zipKeyMessages = zipKeyMessages;
-
-exports.deleteTmpSharedFiles = deleteTmpSharedFiles;
-
-exports.dev =gulp.series(
-    combineLess,
-    minifyCss,
-    minJs
-);
-
-exports.build = gulp.series(
-    combineLess,
-    minifyCss,
-    copyCss,
-    minJs,
-    copyJs,
-    copyFonts,
-    copyImages,
-    zipSharedFiles,
-    copyPreviewImages,
-    copyHtmlFiles,
-    zipKeyMessages,
-    deleteTmpSharedFiles,
-    vaultcsv
-);
+exports.build = build;
 
 
 // template data for key message file

@@ -58,7 +58,6 @@ $ gulp keymessage --shared              Create CLM Pres shared resources json fi
 $ gulp keymessage --page "page name"    Add a Key Message to the project
 $ gulp dev                              Stage task
 $ gulp build                            Deploy task
-$ gulp vaultcsv                         Generates a Veeva Vault MC Loader .CSV file
 ```
 
 ### In depth
@@ -77,12 +76,14 @@ $ gulp setup
 ```
 $ gulp keymessage --pres
 ```
+The Vault CM Loader requires that the Presentation be part of the CVS file 
 - Generate the CLM Presentation Key Message JSON file for use in the Vault CM Loader .csv file 
 - Requires that you have filled in the `config.json` file! 
 
 ```
 $ gulp keymessage --shared
 ```
+The Vault CM Loader requires that the Shared Resources be part of the CVS file and uploaded in the same way as a Key Message 
 - Creates the shared resources Key Message JSON file for use in the Vault CM Loader .csv file 
 - Requires that you have filled in the `config.json` file!
 
@@ -116,12 +117,6 @@ $ gulp build
 - This means: 
   - Pull all the shared resources (CSS, JS, Fonts, Images) into a ZIP and place into the `build` folder
   - Package each Key Message in it's own ZIP, along with it's thumb and poster images, and place in the `build` folder
-  
-> *ToDo: Use the Key Messages JSON file instead of the HTML files in the root!!* 
-
-```
-$ gulp vaultcsv
-```
 - Uses the Key Message JSON files to generate a Vault CM Loader file (this will appear in the `build` folder)
 
 ## And now? 

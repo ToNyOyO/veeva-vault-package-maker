@@ -12,10 +12,10 @@
 - `gulp setup`
 - Fill out `config.json`
 - Create CLM Presentation and Shared resources: 
-  - `gulp createKeyMessage --page --pres`
-  - `gulp createKeyMessage --page --shared`
+  - `gulp keymessage --pres`
+  - `gulp keymessage --shared`
 - Then start creating your pages: 
-  - `gulp createKeyMessage --page "Page Name"`
+  - `gulp keymessage --page "Page Name"`
 
 ## Options and settings
 ### *Amend the config file!*
@@ -30,7 +30,7 @@ root/
 |—— keymessages/
 |—— shared/
 |   |—— css/
-|   |   |—— pages/
+|   |   |—— keymessages/
 |   |—— fonts/
 |   |—— imgs/
 |   |—— js/
@@ -51,14 +51,14 @@ root/
 ```
 TASKS
 _________________________________________________________________________
-$ gulp                                        Default task that kicks off development mode
-$ gulp setup                                  Setup folders and config.json
-$ gulp createKeyMessage --page --pres         Create CLM Presentation json file
-$ gulp createKeyMessage --page --shared       Create CLM Pres shared resources json file
-$ gulp createKeyMessage --page "page name"    Add a Key Message to the project
-$ gulp dev                                    Stage task
-$ gulp build                                  Deploy task
-$ gulp generateVaultCsv                       Generates a Veeva Vault MC Loader .CSV file
+$ gulp                                  Default task that kicks off development mode
+$ gulp setup                            Setup folders and config.json
+$ gulp keymessage --pres                Create CLM Presentation json file
+$ gulp keymessage --shared              Create CLM Pres shared resources json file
+$ gulp keymessage --page "page name"    Add a Key Message to the project
+$ gulp dev                              Stage task
+$ gulp build                            Deploy task
+$ gulp vaultcsv                         Generates a Veeva Vault MC Loader .CSV file
 ```
 
 ### In depth
@@ -75,28 +75,24 @@ $ gulp setup
 
 
 ```
-$ gulp createKeyMessage --page --pres
+$ gulp keymessage --pres
 ```
 - Generate the CLM Presentation Key Message JSON file for use in the Vault CM Loader .csv file 
 - Requires that you have filled in the `config.json` file! 
 
-> *ToDo: lose the --page from this command*
-
 ```
-$ gulp createKeyMessage --page --shared
+$ gulp keymessage --shared
 ```
 - Creates the shared resources Key Message JSON file for use in the Vault CM Loader .csv file 
 - Requires that you have filled in the `config.json` file!
 
-> *ToDo: lose the --page from this command*
-
 ```
-$ gulp createKeyMessage --page "Page name"
+$ gulp keymessage --page "Page name"
 ```
 - Creates the shared resources Key Message JSON file for use in the Vault CM Loader .csv file 
 - Creates the Key Message HTML file at root 
 - Creates template thumb and poster images in the `previews` folder
-- Adds a Key Message LESS file for this page in `shared`>`css`>`pages` (you'll need to add a link into `default.less`)
+- Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (you'll need to add a link into `default.less`)
 
 ### Once you've added all your Key Messages you can start adding your CLM Presentation content
 
@@ -124,7 +120,7 @@ $ gulp build
 > *ToDo: Use the Key Messages JSON file instead of the HTML files in the root!!* 
 
 ```
-$ gulp generateVaultCsv
+$ gulp vaultcsv
 ```
 - Uses the Key Message JSON files to generate a Vault CM Loader file (this will appear in the `build` folder)
 

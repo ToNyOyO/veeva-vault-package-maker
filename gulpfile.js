@@ -8,7 +8,7 @@
  * Once the required fields are filled in, and you have created you HTML files in the root,
  * you can run "gulp addKeyMessagesToConfig" to create some default json
  *
- * This default json will be used to generate the csv file for Vault using "gulp generateVaultCsv"
+ * This default json will be used to generate the csv file for Vault using "gulp vaultcsv"
  *
  * */
 
@@ -60,12 +60,17 @@ function setup(cb) {
         .pipe(rename('config.json'))
         .pipe(gulp.dest('./'));
 
+    // copy keymessages config file
+    gulp.src('./templates/template-keymessages.json')
+        .pipe(rename('keymessages.json'))
+        .pipe(gulp.dest('./'));
+
     // copy .gitignore file
     gulp.src('./templates/.gitignore')
         .pipe(gulp.dest('./'));
 
     // copy shared folder structure
-    gulp.src(['./templates/shared/**', '!./templates/shared/css/pages/less-template-file.less'])
+    gulp.src(['./templates/shared/**', '!./templates/shared/css/keymessages/less-template-file.less'])
         .pipe(gulp.dest('./shared'));
 
     // create build folder
@@ -83,93 +88,68 @@ function setup(cb) {
 /**********************************************************************************************************
  * add a new key message to the project using...
  *
- *    > gulp createKeyMessage --page --pres "presentation name"
- *    > gulp createKeyMessage --page --shared "shared resource name"
- *    > gulp createKeyMessage --page "key message name"
+ *    > gulp keymessage --pres
+ *    > gulp keymessage --shared
+ *    > gulp keymessage --page "key message name"
  *
  * This will strip spaces for use in files names but won't handle stupid characters
  */
-function createKeyMessage(cb) {
-
-    if (arg.page) {
-        jsonfile.readFile('./keymessages.json', function (err, obj) {
-            if (err) {
-                jsonfile.writeFile('./keymessages.json', {}, { spaces: 4, EOL: '\r\n' }, function (err) {
-                    if (err) console.error(err);
-                    createNewKeyMessage();
-                });
-            } else {
-                createNewKeyMessage();
-            }
-        });
-    } else {
-        console.log("\x1b[31m%s\x1b[0m", "\r\n>> Hey! Try gulp createKeyMessage --page --pres");
-        console.log("\x1b[31m%s\x1b[0m", ">> Hey! Try gulp createKeyMessage --page --shared \"new shared resource\"");
-        console.log("\x1b[31m%s\x1b[0m", ">> Hey! Try gulp createKeyMessage --page \"new key message name\"\r\n");
-    }
-
-    cb();
-}
-
-/*********************************************
- * This is called by createKeyMessage - it has to wait for a file to be created
- */
-function createNewKeyMessage() {
+function keymessage(cb) {
 
     let error = false;
 
     if (!('presentationName' in config) || config.presentationName === '') {
-        console.log("config requires 'presentationName'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'presentationName'");
         error = true;
     }
     if (!('externalId' in config) || config.externalId === '') {
-        console.log("config requires 'externalId'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'externalId'");
         error = true;
     }
     if (!('presentationStartDate' in config)) {
-        console.log("config requires 'presentationStartDate'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'presentationStartDate'");
         error = true;
     }
     if (!('presentationEndDate' in config)) {
-        console.log("config requires 'presentationEndDate'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'presentationEndDate'");
         error = true;
     }
     if (!('productName' in config) || config.productName === '') {
-        console.log("config requires 'productName'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'productName'");
         error = true;
     }
     if (!('countryName' in config) || config.countryName === '') {
-        console.log("config requires 'countryName'");
-        error = true;
-    }
-    if (!('sharedResourceFilename' in config) || config.sharedResourceFilename === '') {
-        console.log("config requires 'sharedResourceFilename'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'countryName'");
         error = true;
     }
     if (!('sharedResourceExternalId' in config) || config.sharedResourceExternalId === '') {
-        console.log("config requires 'sharedResourceExternalId'");
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'sharedResourceExternalId'");
         error = true;
     }
 
     if (error) {
-        //cb();
+        cb();
         return;
     }
 
-    if (arg.pres) {
+    if (arg.pres || arg.shared) {
         arg.page = config.presentationName;
-    }
-    if (arg.shared) {
-        arg.page = config.sharedResourceFilename;
     }
     let newFileName = arg.page.replace(/ /g, "-");
     let kmData = {};
+
+    if (arg.shared) {
+        newFileName = newFileName + '-shared-resource';
+    }
 
     jsonfile.readFile('./keymessages.json', function (err, obj) {
         if (err) console.error(err);
 
         // append new key message to obj
-        obj[arg.page] = true;
+        if (arg.shared) {
+            obj[arg.page + ' shared resource'] = true;
+        } else
+            obj[arg.page] = true;
 
         // write out to file
         jsonfile.writeFile('./keymessages.json', obj, { spaces: 4, EOL: '\r\n' }, function (err) {
@@ -189,7 +169,7 @@ function createNewKeyMessage() {
             kmData = templateKMdata('Shared', '', '',
                 arg.page, config.externalId,
                 config.sharedResourceExternalId, config.productName,
-                config.countryName, config.sharedResourceFilename);
+                config.countryName, newFileName);
         }
 
         if (!arg.pres && !arg.shared) {
@@ -199,9 +179,9 @@ function createNewKeyMessage() {
                 .pipe(gulp.dest('./'));
 
             // add page less template
-            gulp.src('./templates/shared/css/pages/less-template-file.less')
+            gulp.src('./templates/shared/css/keymessages/less-template-file.less')
                 .pipe(rename(newFileName + '.less'))
-                .pipe(gulp.dest('./shared/css/pages/'));
+                .pipe(gulp.dest('./shared/css/keymessages/'));
 
             // add page previews
             gulp.src('./templates/previews/*')
@@ -218,15 +198,19 @@ function createNewKeyMessage() {
         gulp.src('*.*', {read: false})
             .pipe(gulp.dest('./keymessages'));
 
-        //  - create the json file
-        jsonfile.writeFile('./keymessages/' + newFileName + '.json', kmData, { spaces: 4, EOL: '\r\n' }, function (err) {
-            if (err) console.error(err);
-        });
+        setTimeout(function() {
+            //  - create the json file
+            jsonfile.writeFile('./keymessages/' + newFileName + '.json', kmData, { spaces: 4, EOL: '\r\n' }, function (err) {
+                if (err) console.error(err);
+            });
+        }, 250);
 
     });
+
+    cb();
 }
 
-function generateVaultCsv(cb) {
+function vaultcsv(cb) {
 
     let loadedKMs = require('./keymessages.json');
     let addHeaders = true;
@@ -272,7 +256,7 @@ function minifyCss(cb) {
             .pipe(cleanCSS({compatibility: 'ie8'}))
             .pipe(rename(function (path) {path.extname = '.min.css'}))
             .pipe(gulp.dest('./shared/css'));
-    }, 250);
+    }, 500);
 
     cb();
 }
@@ -281,7 +265,7 @@ function copyCss(cb) {
     setTimeout(function () {
         gulp.src('./shared/css/default.min.css')
             .pipe(gulp.dest('./build/TMP/shared/css'));
-    }, 500);
+    }, 750);
 
     cb();
 }
@@ -319,7 +303,7 @@ function copyImages(cb) {
 function zipSharedFiles(cb) {
     setTimeout(function () {
         gulp.src('./build/TMP/shared/**')
-            .pipe(zip(config.sharedResourceFilename + '.zip'))
+            .pipe(zip(config.presentationName.replace(/ /g, "-") + '-shared-resource.zip'))
             .pipe(gulp.dest('./build'));
 
         cb();
@@ -374,9 +358,9 @@ exports.default = defaultTask;
 
 exports.setup = setup;
 
-exports.createKeyMessage = createKeyMessage;
+exports.keymessage = keymessage;
 
-exports.generateVaultCsv = generateVaultCsv;
+exports.vaultcsv = vaultcsv;
 
 
 exports.combineLess = combineLess;
@@ -421,7 +405,8 @@ exports.build = gulp.series(
     copyPreviewImages,
     copyHtmlFiles,
     zipKeyMessages,
-    deleteTmpSharedFiles
+    deleteTmpSharedFiles,
+    vaultcsv
 );
 
 

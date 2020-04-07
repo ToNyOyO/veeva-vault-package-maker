@@ -93,7 +93,7 @@ function setup(cb) {
  *
  *    > gulp keymessage --pres
  *    > gulp keymessage --shared
- *    > gulp keymessage --page "key message name"
+ *    > gulp keymessage --new "key message name"
  *
  * This will strip spaces for use in files names but won't handle stupid characters
  */
@@ -136,9 +136,9 @@ function keymessage(cb) {
     }
 
     if (arg.pres || arg.shared) {
-        arg.page = config.presentationName;
+        arg.new = config.presentationName;
     }
-    let newFileName = arg.page.replace(/ /g, "-");
+    let newFileName = arg.new.replace(/ /g, "-");
     let kmData = {};
 
     if (arg.shared) {
@@ -150,9 +150,9 @@ function keymessage(cb) {
 
         // append new key message to obj
         if (arg.shared) {
-            obj[arg.page + ' shared resource'] = true;
+            obj[arg.new + ' shared resource'] = true;
         } else
-            obj[arg.page] = true;
+            obj[arg.new] = true;
 
         // write out to file
         jsonfile.writeFile('./keymessages.json', obj, { spaces: 4, EOL: '\r\n' }, function (err) {
@@ -162,7 +162,7 @@ function keymessage(cb) {
         if (arg.pres) {
             // create key message config file
             kmData = templateKMdata('Presentation', '', '',
-                arg.page, config.externalId,
+                arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, '');
         }
@@ -170,29 +170,29 @@ function keymessage(cb) {
         if (arg.shared) {
             // create key message config file
             kmData = templateKMdata('Shared', '', '',
-                arg.page, config.externalId,
+                arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
         }
 
         if (!arg.pres && !arg.shared) {
-            // copy page template
+            // copy new template
             gulp.src('./templates/template-keymessage.html')
                 .pipe(rename(newFileName + '.html'))
                 .pipe(gulp.dest('./'));
 
-            // add page less template
+            // add new less template
             gulp.src('./templates/shared/css/keymessages/less-template-file.less')
                 .pipe(rename(newFileName + '.less'))
                 .pipe(gulp.dest('./shared/css/keymessages/'));
 
-            // add page previews
+            // add new previews
             gulp.src('./templates/previews/*')
                 .pipe(gulp.dest('./previews/' + newFileName));
 
             // create key message config file
             kmData = templateKMdata('Slide', '', '',
-                arg.page, config.externalId,
+                arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
         }
@@ -333,7 +333,7 @@ exports.build = build;
 
 
 // template data for key message file
-function templateKMdata(type, startDate, endDate, page, externalId, sharedResourceExternalId, productName, countryName, newFileName) {
+function templateKMdata(type, startDate, endDate, name_v, externalId, sharedResourceExternalId, productName, countryName, newFileName) {
 
     let lifecycle = '', mediaType = '', presProductName = '', presCountry = '', presExternalId = '', training = '', hidden = '', shared = '', fieldsOnly = '';
 
@@ -364,7 +364,7 @@ function templateKMdata(type, startDate, endDate, page, externalId, sharedResour
     return {
         "document_id__v" : "",
         "external_id__v" : presExternalId,
-        "name__v" : page,
+        "name__v" : name_v,
         "Create Presentation" : "FALSE",
         "Type" : type,
         "lifecycle__v" : lifecycle,

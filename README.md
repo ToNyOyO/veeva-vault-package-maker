@@ -8,14 +8,15 @@
 >As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 
 ## Quick start...
-- `npm install`
-- `gulp setup`
+- Copy the files into a new project folder 
+- Run `npm install`
+- Run `gulp setup`
 - Fill out `config.json`
 - Create CLM Presentation and Shared resources: 
-  - `gulp keymessage --pres`
-  - `gulp keymessage --shared`
+  - Run `gulp keymessage --pres`
+  - Run `gulp keymessage --shared`
 - Then start creating your pages: 
-  - `gulp keymessage --page "Page Name"`
+  - Run `gulp keymessage --new "Key Message Name"` for each Key Message
 
 ## Options and settings
 ### *Amend the config file!*
@@ -34,7 +35,7 @@ Fill in the required information in the new `config.json` or **nothing will work
 ```
 
 ## File structure
-
+This will be generated when you run `$ gulp setup`
 ```
 root/
 |—— build/
@@ -63,13 +64,13 @@ root/
 ```
 TASKS
 _________________________________________________________________________
-$ gulp                                  Default task that kicks off development mode
-$ gulp setup                            Setup folders and config.json
-$ gulp keymessage --pres                Create CLM Presentation json file
-$ gulp keymessage --shared              Create CLM Pres shared resources json file
-$ gulp keymessage --page "page name"    Add a Key Message to the project
-$ gulp dev                              Stage task
-$ gulp build                            Deploy task
+$ gulp                                        Default task that kicks off development mode
+$ gulp setup                                  Setup folders and config.json
+$ gulp keymessage --pres                      Create CLM Presentation json file
+$ gulp keymessage --shared                    Create CLM Pres shared resources json file
+$ gulp keymessage --new "Key Message name"    Add a Key Message to the project
+$ gulp dev                                    Stage task
+$ gulp build                                  Deploy task
 ```
 
 ### In depth
@@ -100,7 +101,7 @@ The Vault CM Loader requires that the Shared Resources be part of the CVS file a
 - Requires that you have filled in the `config.json` file!
 
 ```
-$ gulp keymessage --page "Page name"
+$ gulp keymessage --new "Key Message name"
 ```
 - Creates the shared resources Key Message JSON file for use in the Vault CM Loader .csv file 
 - Creates the Key Message HTML file at root 

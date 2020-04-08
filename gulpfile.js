@@ -21,6 +21,7 @@ const cleanCSS = require('gulp-clean-css'); // minify CSS
 const uglify = require('gulp-uglify'); // minify JS
 const zip = require('gulp-zip'); // make a ZIP
 const rimraf = require('rimraf'); // delete a folder that contains files
+const replace = require('gulp-replace'); // string replace in pipe
 
 const htmlFiles = glob.sync('./*.html');
 let config = {};
@@ -234,8 +235,22 @@ function dev(cb) {
 function build(cb) {
 
     // copy js
-    gulp.src('./shared/js/*.min.js')
-        .pipe(gulp.dest('./build/TMP/shared/js'));
+    gulp.src(['./shared/js/app.js'])
+        .pipe(replace('isPublished = false', 'isPublished = true'))
+        .pipe(gulp.dest('./shared/js'))
+        .on('end', function () {
+            gulp.src(['./shared/js/*.js', '!./shared/js/*.min.js'])
+                .pipe(uglify())
+                .pipe(rename(function (path) {path.extname = '.min.js'}))
+                .pipe(gulp.dest('./shared/js'))
+                .on('end', function () {
+                    gulp.src('./shared/js/*.min.js')
+                        .pipe(gulp.dest('./build/TMP/shared/js'));
+                });
+        })
+
+    //gulp.src('./shared/js/*.min.js')
+      //  .pipe(gulp.dest('./build/TMP/shared/js'));
 
     // copy fonts
     gulp.src('./shared/fonts/*')

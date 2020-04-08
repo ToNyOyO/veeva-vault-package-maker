@@ -246,6 +246,11 @@ function build(cb) {
                 .on('end', function () {
                     gulp.src('./shared/js/*.min.js')
                         .pipe(gulp.dest('./build/TMP/shared/js'));
+                
+                    // reset app.js isPublished var to false
+                    gulp.src(['./shared/js/app.js'])
+                        .pipe(replace('isPublished = true', 'isPublished = false'))
+                        .pipe(gulp.dest('./shared/js'))
                 });
         })
 

@@ -3,10 +3,7 @@
  * For any of this to work you need to create a config.json in the project root
  * Add an empty object to the file like so... {}
  *
- * Then run "gulp createConfigFile" to pre-generate the required fields
- *
- * Once the required fields are filled in, and you have created you HTML files in the root,
- * you can run "gulp addKeyMessagesToConfig" to create some default json
+ * Then run "gulp setup" to pre-generate the required fields
  *
  * This default json will be used to generate the csv file for Vault using "gulp vaultcsv"
  *
@@ -42,7 +39,7 @@ try {
 function defaultTask(cb) {
     if ('presentationName' in config) {
         gulp.watch([
-            './shared/css/*.less',
+            './shared/css/**/*.less',
             './shared/js/*.js',
             '!./shared/js/*.min.js'
         ], dev).on('end', function() {console.log('test')});

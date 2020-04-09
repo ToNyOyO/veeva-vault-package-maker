@@ -106,7 +106,7 @@ $ gulp keymessage --new "Key Message name"
 - Creates the Key Message JSON file for use in the Vault CM Loader .csv file 
 - Creates the Key Message HTML file at root 
 - Creates template thumb and poster images in the `previews` folder
-- Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (you'll need to add a link into `default.less`)
+- Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (also adds a link into `default.less`)
 
 ### Once you've added all your Key Messages you can start adding your CLM Presentation content
 

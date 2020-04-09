@@ -18,6 +18,8 @@
 - Then start creating your pages: 
   - Run `gulp keymessage --new "Key Message Name"` for each Key Message
 
+To change the page order in Vault you can rearrange the order of the pages in `./keymessages.json`
+
 ## Settings
 ### *Amend the config file!*
 Fill in the required information in the new `config.json` or **nothing will work!** (the dates are optional everything else is required).
@@ -107,8 +109,9 @@ $ gulp keymessage --new "Key Message name"
 - Creates the Key Message HTML file at root 
 - Creates template thumb and poster images in the `previews` folder
 - Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (also adds a link into `default.less`)
+- Inserts a method to capture menu interaction for the new keymessage (`app.js`) and you'll want to add a class to you menu link that matches the pattern `goTo-FilenameInCamelcase` 
 
-### Once you've added all your Key Messages you can start adding your CLM Presentation content
+### Once you've added a Key Message you can start adding your CLM Presentation content
 
 ## 
 

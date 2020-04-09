@@ -10,6 +10,7 @@
  * */
 
 const gulp = require('gulp');
+const fs = require('fs');
 const glob = require("glob");
 const path = require('path');
 const jsonfile = require('jsonfile'); // do stuff to json files
@@ -22,6 +23,7 @@ const uglify = require('gulp-uglify'); // minify JS
 const zip = require('gulp-zip'); // make a ZIP
 const rimraf = require('rimraf'); // delete a folder that contains files
 const replace = require('gulp-replace'); // string replace in pipe
+const inject = require('gulp-inject-string'); // append/prepend/wrap/before/after/beforeEach/afterEach/replace
 
 const htmlFiles = glob.sync('./*.html');
 let config = {};
@@ -193,6 +195,14 @@ function keymessage(cb) {
                 .pipe(inject.append('\r\n@import "keymessages/' + newFileName + '.less";'))
                 .pipe(gulp.dest('./shared/css/'));
 
+            // insert JS link into app.js
+            let js = fs.readFileSync('./templates/template-keymessage.js', 'utf8');
+            js = js.replace(/FILENAME/g, newFileName).replace('METHODNAME', arg.new.toCamelCase());
+
+            gulp.src('./shared/js/app.js')
+                .pipe(inject.before('/** INSERT NEW KEYMESSAGE LINK HERE **/', js + '    '))
+                .pipe(gulp.dest('./shared/js/'));
+
             // create key message config file
             kmData = templateKMdata('Slide', '', '',
                 arg.new, config.externalId,
@@ -251,7 +261,7 @@ function build(cb) {
                 .on('end', function () {
                     gulp.src('./shared/js/*.min.js')
                         .pipe(gulp.dest('./build/TMP/shared/js'));
-                
+
                     // reset app.js isPublished var to false
                     gulp.src(['./shared/js/app.js'])
                         .pipe(replace('isPublished = true', 'isPublished = false'))
@@ -342,7 +352,6 @@ function build(cb) {
     cb();
 }
 
-
 exports.default = defaultTask;
 
 exports.setup = setup;
@@ -411,6 +420,14 @@ function templateKMdata(type, startDate, endDate, name_v, externalId, sharedReso
         "slide.clm_content__v" : "TRUE",
         "slide.crm_shared_resource__v" : shared
     }
+}
+
+// convert string to camelcase
+String.prototype.toCamelCase = function() {
+    return this
+        .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/\^(.)/g, function($1) { return $1.toLowerCase(); });
 }
 
 // fetch command line arguments

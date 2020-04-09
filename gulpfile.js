@@ -178,6 +178,7 @@ function keymessage(cb) {
         if (!arg.pres && !arg.shared) {
             // copy new template
             gulp.src('./templates/template-keymessage.html')
+                .pipe(inject.replace('ADD PAGE ID HERE', arg.new.toCamelCase()))
                 .pipe(rename(newFileName + '.html'))
                 .pipe(gulp.dest('./'));
 
@@ -187,6 +188,8 @@ function keymessage(cb) {
 
             // add new less template
             gulp.src('./templates/shared/css/keymessages/less-template-file.less')
+                .pipe(inject.replace('PAGE NAME', arg.new))
+                .pipe(inject.replace('PageName', arg.new.toCamelCase()))
                 .pipe(rename(newFileName + '.less'))
                 .pipe(gulp.dest('./shared/css/keymessages/'));
 

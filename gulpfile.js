@@ -179,14 +179,19 @@ function keymessage(cb) {
                 .pipe(rename(newFileName + '.html'))
                 .pipe(gulp.dest('./'));
 
+            // add new previews
+            gulp.src('./templates/previews/*')
+                .pipe(gulp.dest('./previews/' + newFileName));
+
             // add new less template
             gulp.src('./templates/shared/css/keymessages/less-template-file.less')
                 .pipe(rename(newFileName + '.less'))
                 .pipe(gulp.dest('./shared/css/keymessages/'));
 
-            // add new previews
-            gulp.src('./templates/previews/*')
-                .pipe(gulp.dest('./previews/' + newFileName));
+            // append new less template @import to default.less
+            gulp.src('./shared/css/default.less')
+                .pipe(inject.append('\r\n@import "keymessages/' + newFileName + '.less";'))
+                .pipe(gulp.dest('./shared/css/'));
 
             // create key message config file
             kmData = templateKMdata('Slide', '', '',

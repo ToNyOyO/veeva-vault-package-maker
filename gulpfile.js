@@ -170,7 +170,7 @@ function keymessage(cb) {
         if (arg.shared) {
             // create key message config file
             kmData = templateKMdata('Shared', '', '',
-                arg.new, config.externalId,
+                arg.new + ' shared resource', config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
         }

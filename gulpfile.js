@@ -200,7 +200,7 @@ function keymessage(cb) {
 
             // insert JS link into app.js
             let js = fs.readFileSync('./templates/template-keymessage.js', 'utf8');
-            js = js.replace(/FILENAME/g, newFileName).replace('METHODNAME', arg.new.toCamelCase());
+            js = js.replace(/FILENAME/g, newFileName).replace('METHODNAME', arg.new.replace(/-/g, " ").toCamelCase());
 
             gulp.src('./shared/js/app.js')
                 .pipe(inject.before('/** INSERT NEW KEYMESSAGE LINK HERE **/', js + '    '))

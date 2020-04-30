@@ -27,6 +27,7 @@ Fill in the required information in the new `config.json` or **nothing will work
 ```
 {
     "presentationName": "",
+    "prefix": "",
     "externalId": "",
     "presentationStartDate": "",
     "presentationEndDate": "",

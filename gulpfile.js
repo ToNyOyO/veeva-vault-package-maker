@@ -105,6 +105,10 @@ function keymessage(cb) {
         console.log("\x1b[31m%s\x1b[0m", "config requires 'presentationName'");
         error = true;
     }
+    if (!('prefix' in config) || config.prefix === '') {
+        console.log("\x1b[31m%s\x1b[0m", "config requires 'prefix'");
+        error = true;
+    }
     if (!('externalId' in config) || config.externalId === '') {
         console.log("\x1b[31m%s\x1b[0m", "config requires 'externalId'");
         error = true;
@@ -162,7 +166,7 @@ function keymessage(cb) {
         if (arg.pres) {
             // create key message config file
             kmData = templateKMdata('Presentation', '', '',
-                arg.new, config.externalId,
+                config.prefix, arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, '');
         }
@@ -170,7 +174,7 @@ function keymessage(cb) {
         if (arg.shared) {
             // create key message config file
             kmData = templateKMdata('Shared', '', '',
-                arg.new + ' shared resource', config.externalId,
+                config.prefix, arg.new + ' shared resource', config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
         }
@@ -208,7 +212,7 @@ function keymessage(cb) {
 
             // create key message config file
             kmData = templateKMdata('Slide', '', '',
-                arg.new, config.externalId,
+                config.prefix, arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
         }
@@ -367,14 +371,16 @@ exports.build = build;
 
 
 // template data for key message file
-function templateKMdata(type, startDate, endDate, name_v, externalId, sharedResourceExternalId, productName, countryName, newFileName) {
+function templateKMdata(type, startDate, endDate, prefix, name_v, externalId, sharedResourceExternalId, productName, countryName, newFileName) {
 
     let lifecycle = '', mediaType = '', presProductName = '', presCountry = '', presExternalId = '', training = '', hidden = '', shared = '', fieldsOnly = '';
+
+    prefix = prefix.toUpperCase();
 
     if (type === 'Presentation') {
         presProductName = productName;
         presCountry = countryName;
-        presExternalId = externalId;
+        presExternalId = prefix + 'pres-' + externalId;
         lifecycle = 'Binder Lifecycle';
         training = hidden = fieldsOnly = 'FALSE';
 
@@ -383,13 +389,15 @@ function templateKMdata(type, startDate, endDate, name_v, externalId, sharedReso
 
     if (type === 'Slide') {
         lifecycle = 'CRM Content Lifecycle';
+        externalId = prefix + 'pres-' + externalId;
+        sharedResourceExternalId = prefix + 'sr-' + sharedResourceExternalId;
         newFileName = newFileName + ".zip";
         mediaType = 'HTML';
     }
 
     if (type === 'Shared') {
         lifecycle = 'CRM Content Lifecycle';
-        presExternalId = sharedResourceExternalId;
+        presExternalId = prefix + 'sr-' + sharedResourceExternalId;
         externalId = sharedResourceExternalId = '';
         newFileName = newFileName + ".zip";
         shared = 'TRUE';

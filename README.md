@@ -191,18 +191,18 @@ $ gulp build
 
 #### ImageMagick
 
-Instructions: [https://imagemagick.org/] 
+Instructions: [https://imagemagick.org/](https://imagemagick.org/) 
 
 Installer(s):
 
-- [https://imagemagick.org/download/binaries/ImageMagick-7.0.10-10-Q16-x64-dll.exe]
+- [https://imagemagick.org/download/binaries/ImageMagick-7.0.10-10-Q16-x64-dll.exe](https://imagemagick.org/download/binaries/ImageMagick-7.0.10-10-Q16-x64-dll.exe)
 
 #### GraphicsMagick
 
-Instructions: [http://www.graphicsmagick.org/] 
+Instructions: [http://www.graphicsmagick.org/](http://www.graphicsmagick.org/) 
 
 Installer(s):
 
-- [ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe]
+- [ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe)
 
-- [ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe.sig]
+- [ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe.sig](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe.sig)

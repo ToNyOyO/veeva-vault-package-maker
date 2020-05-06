@@ -16,15 +16,6 @@
 
 ## Upcoming changes...
 
-##### Processing of iPad screen grabs: 
-
-This will require you installing ImageMagick.
-
-Proposed method of function: 
-- Drop the iPad screen grab into the previews folder of each key message
-- It will create a thumb and poster form the grab
-- It will then delete the grab
-
 ##### Cleaning user input:
 
 For safety sake, allow users to enter junk then clean it so it doesn't break anything. 
@@ -41,6 +32,8 @@ For safety sake, allow users to enter junk then clean it so it doesn't break any
   - Run `gulp keymessage --new "Key Message Name"` for each Key Message
 - You can add links to slides in other Veeva presentations: 
   - Run `gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
+- Create poster and thumbnail images:
+  - Drop your screen grabs into each Key Message folder in `./previews` and run `gulp images` (this will work for png or jpg and the screen grab filename is irrelevant)
 
 To change the page order in Vault you can rearrange the order of the pages in `./keymessages.json`
 
@@ -101,6 +94,7 @@ $ gulp keymessage --new "Key Message name"    Add a Key Message to the project
 $ gulp link --km "key-message-name.zip" 
             --method "nameOfMethod" 
             --id "123-presentation-ID"        Add a link to a slide in another Veeva presentation
+$ gulp images                                 Process screen grabs into poster/thumbnail images
 $ gulp dev                                    Stage task
 $ gulp build                                  Deploy task
 ```
@@ -144,12 +138,20 @@ $ gulp keymessage --new "Key Message name"
 ##### Once you've added a Key Message you can start adding your CLM Presentation content
 
 ```
-`gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
+gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID" 
 ```
 - Inserts a method to capture interaction for the new link (`app.js`) and you'll want to add a class to your link that matches the pattern `goTo-nameOfMethod` 
 - The `--id` must match the `Presentation Id` as set in Vault/Salesforce
 - `--km` must be an existing key message (will also add `.zip` to the end if you don't)
 - The `--method` will be forced to camel case, hyphens and spaces will be removed
+
+```
+gulp images
+```
+- Converts each Key Message screen grab into the poster and thumbnail for that Key Message
+- Place your screen grab file into the `./previews/your-key-message` folder
+- The screen grab should be either jpg or png
+- The screen grab filename doesn't matter but shouldn't be "poster" or "thumbnail"
 
 ## 
 

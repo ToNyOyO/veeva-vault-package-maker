@@ -24,6 +24,8 @@ const zip = require('gulp-zip'); // make a ZIP
 const rimraf = require('rimraf'); // delete a folder that contains files
 const replace = require('gulp-replace'); // string replace in pipe
 const inject = require('gulp-inject-string'); // append/prepend/wrap/before/after/beforeEach/afterEach/replace
+const imageResize = require('gulp-image-resize');
+const clean = require('gulp-clean'); // delete files/folders
 
 const htmlFiles = glob.sync('./*.html');
 let config = {};
@@ -279,6 +281,46 @@ function externalLink(cb) {
     cb();
 }
 
+
+function generateImages(cb) {
+
+    // loop through previews folders
+    // resize grab and rename as poster
+    // copy and resize poster and rename as thumb
+
+    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'])
+        .pipe(imageResize({
+            //imageMagick: true,
+            width: 1024,
+            height: 768,
+            quality: 5,
+            format: 'png'
+        }))
+        .pipe(rename(function (path){
+            path.basename = 'poster';
+        }))
+        .pipe(gulp.dest('./previews'));
+
+    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'])
+        .pipe(imageResize({
+            //imageMagick: true,
+            width: 200,
+            height: 150,
+            quality: 3,
+            format: 'png'
+        }))
+        .pipe(rename(function (path){
+            path.basename = 'thumb';
+        }))
+        .pipe(gulp.dest('./previews'));
+
+    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'], {read: false})
+        .pipe(clean());
+
+    cb();
+}
+
+
 function dev(cb) {
     gulp.src('./shared/css/default.less')
         .pipe(sourcemaps.init())
@@ -412,6 +454,8 @@ exports.setup = setup;
 exports.keymessage = keymessage;
 
 exports.link = externalLink;
+
+exports.images = generateImages;
 
 exports.dev = dev;
 

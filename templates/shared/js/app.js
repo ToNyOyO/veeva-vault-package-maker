@@ -63,7 +63,15 @@ $(function() {
         $(this).parent().parent().removeClass('show');
     });
 
+    
+     /******************************************************************************
+     * Links out to other presentations
+     *
+     */
 
+    /** INSERT LINK TO OTHER PRES HERE **/
+
+    
     /******************************************************************************
      * VEEVA MENU LINKS
      */

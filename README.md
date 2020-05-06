@@ -38,6 +38,12 @@ To change the page order in Vault you can rearrange the order of the pages in `.
 - Create poster and thumbnail images:
   - Drop your screen grabs into each Key Message folder in `./previews` and run `gulp images` (this will work for png or jpg and the screen grab filename is irrelevant)
 
+## Prerequisits 
+
+You need to install both ImageMagick and GraphicsMagick if you want to use the `gulp images` command. 
+
+[see bottom of README for links]
+
 ## Settings
 ### *Amend the config file!*
 Fill in the required information in the new `config.json` or **nothing will work!** (the dates are optional everything else is required).
@@ -180,3 +186,23 @@ $ gulp build
 - Chuck the CSV file, found in the `build` folder, at the Vault CM Loader and watch it successfully get verified
 - Upload your ZIP files from the `build` folder too
 - Sit back and relax 
+
+# Windows Installers 
+
+#### ImageMagick
+
+Instructions: https://imagemagick.org/ 
+
+Installer(s):
+
+- https://imagemagick.org/download/binaries/ImageMagick-7.0.10-10-Q16-x64-dll.exe
+
+#### GraphicsMagick
+
+Instructions: http://www.graphicsmagick.org/ 
+
+Installer(s):
+
+- ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe
+
+- ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/GraphicsMagick-1.3.35-Q8-win64-dll.exe.sig

@@ -30,12 +30,13 @@ For safety sake, allow users to enter junk then clean it so it doesn't break any
   - Run `gulp keymessage --shared`
 - Then start creating your pages: 
   - Run `gulp keymessage --new "Key Message Name"` for each Key Message
+
+To change the page order in Vault you can rearrange the order of the pages in `./keymessages.json`
+
 - You can add links to slides in other Veeva presentations: 
   - Run `gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
 - Create poster and thumbnail images:
   - Drop your screen grabs into each Key Message folder in `./previews` and run `gulp images` (this will work for png or jpg and the screen grab filename is irrelevant)
-
-To change the page order in Vault you can rearrange the order of the pages in `./keymessages.json`
 
 ## Settings
 ### *Amend the config file!*

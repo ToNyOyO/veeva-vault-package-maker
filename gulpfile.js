@@ -233,6 +233,52 @@ function keymessage(cb) {
     cb();
 }
 
+
+/**********************************************************************************************************
+ * add a new key message to the project using...
+ *
+ *    > gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "presentation-ID"
+ *
+ * This will strip spaces for use in files names but won't handle stupid characters
+ */
+function externalLink(cb) {
+
+    let error = false;
+
+    if (arg.method === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", "requires '--method'");
+        error = true;
+    }
+    if (arg.km === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", "requires '--km'");
+        error = true;
+    }
+    if (arg.id === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", "requires '--id'");
+        error = true;
+    }
+
+    if (error) {
+        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"');
+        cb();
+        return;
+    }
+
+    let methodName = arg.method.replace(/-/g, " ").toCamelCase();
+    let keyMessage = (arg.km.indexOf('.zip') !== -1) ? arg.km : arg.km + '.zip';
+    let presID = arg.id;
+
+    // insert JS link into app.js
+    let js = fs.readFileSync('./templates/template-link-to-pres.js', 'utf8');
+    js = js.replace(/KEYMESSAGE/g, keyMessage).replace(/PRESENTATION/g, presID).replace('METHODNAME', methodName);
+
+    gulp.src('./shared/js/app.js')
+        .pipe(inject.before('/** INSERT LINK TO OTHER PRES HERE **/', js + '    '))
+        .pipe(gulp.dest('./shared/js/'));
+
+    cb();
+}
+
 function dev(cb) {
     gulp.src('./shared/css/default.less')
         .pipe(sourcemaps.init())
@@ -364,6 +410,8 @@ exports.default = defaultTask;
 exports.setup = setup;
 
 exports.keymessage = keymessage;
+
+exports.link = externalLink;
 
 exports.dev = dev;
 

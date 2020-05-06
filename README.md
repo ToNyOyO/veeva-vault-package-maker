@@ -7,6 +7,28 @@
 > 
 >As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 
+## What does it NOT do?
+>It will not accept crazy characters as input. It does not clean /?$& or anything else! Use only spaces, hyphens, underscores and alphanumeric characters! 
+>
+>It does not screen grab your thumbnail/poster images for you. 
+>
+>It will not make your bed either. 
+
+## Upcoming changes...
+
+##### Processing of iPad screen grabs: 
+
+This will require you installing ImageMagick.
+
+Proposed method of function: 
+- Drop the iPad screen grab into the previews folder of each key message
+- It will create a thumb and poster form the grab
+- It will then delete the grab
+
+##### Cleaning user input:
+
+For safety sake, allow users to enter junk then clean it so it doesn't break anything. 
+
 ## Quick start...
 - Copy the files into a new project folder 
 - Run `npm install`
@@ -17,6 +39,8 @@
   - Run `gulp keymessage --shared`
 - Then start creating your pages: 
   - Run `gulp keymessage --new "Key Message Name"` for each Key Message
+- You can add links to slides in other Veeva presentations: 
+  - Run `gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
 
 To change the page order in Vault you can rearrange the order of the pages in `./keymessages.json`
 
@@ -36,6 +60,8 @@ Fill in the required information in the new `config.json` or **nothing will work
     "sharedResourceExternalId": ""
 }
 ```
+
+The `prefix` key will be prepended to both the `Presentation Link` and the `slide.related_shared_resource__v` fields in each keymessage json file. The presentation title will also be prefixed with this when uploaded to Vault. 
 
 ## File structure
 This will be generated when you run `$ gulp setup`
@@ -72,6 +98,9 @@ $ gulp setup                                  Setup folders and config.json
 $ gulp keymessage --pres                      Create CLM Presentation json file
 $ gulp keymessage --shared                    Create CLM Pres shared resources json file
 $ gulp keymessage --new "Key Message name"    Add a Key Message to the project
+$ gulp link --km "key-message-name.zip" 
+            --method "nameOfMethod" 
+            --id "123-presentation-ID"        Add a link to a slide in another Veeva presentation
 $ gulp dev                                    Stage task
 $ gulp build                                  Deploy task
 ```
@@ -110,9 +139,17 @@ $ gulp keymessage --new "Key Message name"
 - Creates the Key Message HTML file at root 
 - Creates template thumb and poster images in the `previews` folder
 - Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (also adds a link into `default.less`)
-- Inserts a method to capture menu interaction for the new keymessage (`app.js`) and you'll want to add a class to you menu link that matches the pattern `goTo-FilenameInCamelcase` 
+- Inserts a method to capture menu interaction for the new keymessage (`app.js`) and you'll want to add a class to your menu link that matches the pattern `goTo-FilenameInCamelcase` 
 
 ### Once you've added a Key Message you can start adding your CLM Presentation content
+
+```
+`gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
+```
+- Inserts a method to capture interaction for the new link (`app.js`) and you'll want to add a class to your link that matches the pattern `goTo-nameOfMethod` 
+- The `--id` must match the `Presentation Id` as set in Vault/Salesforce
+- `--km` must be an existing key message (will also add `.zip` to the end if you don't)
+- The `--method` will be forced to camel case, hyphens and spaces will be removed
 
 ## 
 

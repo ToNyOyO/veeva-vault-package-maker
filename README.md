@@ -141,7 +141,7 @@ $ gulp keymessage --new "Key Message name"
 - Adds a Key Message LESS file for this page in `shared`>`css`>`keymessages` (also adds a link into `default.less`)
 - Inserts a method to capture menu interaction for the new keymessage (`app.js`) and you'll want to add a class to your menu link that matches the pattern `goTo-FilenameInCamelcase` 
 
-### Once you've added a Key Message you can start adding your CLM Presentation content
+##### Once you've added a Key Message you can start adding your CLM Presentation content
 
 ```
 `gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 

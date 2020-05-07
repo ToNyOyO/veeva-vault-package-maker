@@ -1,15 +1,19 @@
 # Veeva Vault CLM Presentation tool 
 
->*All of this is subject to change as development continues but the idea was to create something simple that just works* 
+*All of this is subject to change as development continues but the idea was to create something simple that just works* 
+
+#### Design philosophy 
+
+This is not an all-encompassing tool, made to do everything for you. This is just a collection of tasks to remove the drudgery of making Veeva presentations. That's all it's meant to do. 
+
+If there's something I need to do more than once, and it's a faff to do, I'll probably extend this to automate that. Like renaming a Key Message: Once or twice is fine, but twice, across four presentations? For all these files?! Uff... That needs a tool. 
 
 ## What does it do?  
->This will create the project structure based on the idea of using Shared Resources, and using a pre-defined template structure. 
+>This will create the project structure based on using Shared Resources rather than resources per Key Message, and using a pre-defined HTML/LESS/JS template structure. 
 > 
 >As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 
 ## What does it NOT do?
->It will not accept crazy characters as input. It does not clean /?$& or anything else! Use only spaces, hyphens, underscores and alphanumeric characters! 
->
 >It does not screen grab your thumbnail/poster images for you. 
 >
 >It will not make your bed either. 
@@ -19,7 +23,12 @@
 ##### Rename key Message
 
 - Rename Key Kessage and all associated files
-- `gulp rename --from "Key Message Name" --to "New Key Message Name"`
+- Proposed task: `gulp rename --from "Key Message Name" --to "New Key Message Name"`
+
+##### Regenerate Key Message JSON 
+
+- Regenerate Key Message JSON files after amending the config.json file
+- Proposed task: `gulp keymessage --regen ["Key message name"] [--all]`
 
 ## Quick start...
 - Copy the files into a new project folder 

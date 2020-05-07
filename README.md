@@ -10,6 +10,8 @@ If there's something I need to do more than once, and it's a faff to do, I'll pr
 
 ## What does it do?  
 >This will create the project structure based on using Shared Resources rather than resources per Key Message, and using a pre-defined HTML/LESS/JS template structure. 
+>
+>Generate a .csv file and ZIPs compatible with Vault MC Loader
 > 
 >As long as all your LESS files are in `shared`>`css` and are `imported` into `default.less` and your JS files are in `shared`>`js` they will be packaged correctly. 
 

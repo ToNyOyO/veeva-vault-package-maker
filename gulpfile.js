@@ -9,6 +9,8 @@
  *
  * */
 
+//@ToDo: possibly import the menu from a file? https://github.com/reinerBa/gulp-tag-content-replace
+
 const gulp = require('gulp');
 const fs = require('fs');
 const glob = require("glob");

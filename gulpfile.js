@@ -99,7 +99,7 @@ function setup(cb) {
  *    > gulp keymessage --shared
  *    > gulp keymessage --new "key message name"
  *
- * This will strip spaces for use in files names but won't handle stupid characters
+ *  Does not check for existing files!
  */
 function keymessage(cb) {
 
@@ -250,7 +250,6 @@ function keymessage(cb) {
  *
  *    > gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "presentation-ID"
  *
- * This will strip spaces for use in files names but won't handle stupid characters
  */
 function externalLink(cb) {
 
@@ -330,6 +329,13 @@ function generateImages(cb) {
 }
 
 
+/**********************************************************************************************************
+ * rename a key message in the project using...
+ *
+ *    > gulp rename --from "Key message" --to "New key message"
+ *
+ * Does not check for existing files!
+ */
 function renameKeymessage(cb) {
 
     let error = false;
@@ -349,14 +355,10 @@ function renameKeymessage(cb) {
         return;
     }
 
-    /***/
-    console.log("\x1b[31m%s\x1b[0m", "Rename is not implemented yet")
-    cb();
-    return;
-    /***/
-
     let oldFileName = arg.from.replace(/ /g, "-");
     let newFileName = arg.to.replace(/ /g, "-");
+    let oldMethodName = arg.from.replace(/-/g, " ").toCamelCase();
+    let newMethodName = arg.to.replace(/-/g, " ").toCamelCase();
 
     // update LESS and rename file
     gulp.src('./shared/css/keymessages/' + oldFileName + '.less')
@@ -373,20 +375,17 @@ function renameKeymessage(cb) {
         .pipe(inject.replace('@import "keymessages/' + oldFileName, '@import "keymessages/' + newFileName))
         .pipe(gulp.dest('./shared/css/'));
 
-    console.log(arg.from.toCamelCase());
-    console.log(oldFileName);
-
     // update app.js
     gulp.src('./shared/js/app.js')
-        .pipe(inject.replace("$('.goTo-" + arg.from.toCamelCase() + "').on", "$('.goTo-" + arg.to.toCamelCase() + "').on"))
-        .pipe(inject.replace("com.veeva.clm.gotoSlide('" + oldFileName + ".zip', '');", "com.veeva.clm.gotoSlide('" + newFileName + ".zip', '');"))
+        .pipe(inject.replace("goTo-" + oldMethodName, "goTo-" + newMethodName))
+        .pipe(inject.replace("'" + oldFileName + ".zip', ''", "'" + newFileName + ".zip', ''"))
         .pipe(inject.replace("href = '" + oldFileName + ".html'", "href = '" + newFileName + ".html'"))
         .pipe(gulp.dest('./shared/js/'));
 
     // update classname + goTo in HTML and rename HTML
     gulp.src('./' + oldFileName + '.html')
         .pipe(inject.replace('<body id="' + arg.from.toCamelCase() + '">', '<body id="' + arg.to.toCamelCase() + '">'))
-        .pipe(inject.replace('goTo-' + arg.from.toCamelCase(), 'goTo-' + arg.to.toCamelCase()))
+        .pipe(inject.replace('goTo-' + oldMethodName, 'goTo-' + newMethodName))
         .pipe(rename(newFileName + '.html'))
         .pipe(gulp.dest('./'))
         .on('end', function() {
@@ -408,11 +407,17 @@ function renameKeymessage(cb) {
             gulp.src('./keymessages/' + oldFileName + '.json', {read: false}).pipe(clean());
         });
 
-
-
-
-    //@ToDo: rename previews folder
-
+    // rename previews folder
+    gulp.src('./previews/' + oldFileName)
+        .pipe(rename(newFileName))
+        .pipe(gulp.dest('./previews/'))
+        .on('end', function() {
+            gulp.src('./previews/' + oldFileName + '/*')
+                .pipe(gulp.dest('./previews/' + newFileName))
+                .on('end', function() {
+                    gulp.src('./previews/' + oldFileName, {read: false}).pipe(clean());
+                });
+        });
 
     cb();
 }

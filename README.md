@@ -20,11 +20,6 @@ If there's something I need to do more than once, and it's a faff to do, I'll pr
 
 ## Upcoming changes...
 
-##### Rename key Message
-
-- Rename Key Kessage and all associated files
-- Proposed task: `gulp rename --from "Key Message Name" --to "New Key Message Name"`
-
 ##### Regenerate Key Message JSON 
 
 - Regenerate Key Message JSON files after amending the config.json file
@@ -47,6 +42,9 @@ To change the page order in Vault you can rearrange the order of the pages in `.
   - Run `gulp link --km "key-message-name.zip" --method "nameOfMethod" --id "123-presentation-ID"` 
 - Create poster and thumbnail images:
   - Drop your screen grabs into each Key Message folder in `./previews` and run `gulp images` (this will work for png or jpg and the screen grab filename is irrelevant)
+- Rename existing Key Message:
+  - Run `gulp rename --from "Old name" --to "New name"`
+  - Renames all associated files/folders as they were created
 
 ## Prerequisits 
 
@@ -123,8 +121,8 @@ $ gulp link --km "key-message-name.zip"
             --method "nameOfMethod" 
             --id "123-presentation-ID"        Add a link to a slide in another Veeva presentation
 
-$ gulp rename --from "old name" 
-              --to "new name"                 Rename a Key Message and associated files
+$ gulp rename --from "Old name" 
+              --to "New name"                 Rename a Key Message and associated files
 ```
 
 ### In depth
@@ -180,6 +178,14 @@ gulp images
 - Place your screen grab file into the `./previews/your-key-message` folder
 - The screen grab should be either jpg or png
 - The screen grab filename doesn't matter but shouldn't be "poster" or "thumbnail"
+
+```
+gulp rename --from "Old key message" --to "New key message"
+```
+- Renames HTML and LESS file
+- Changes CSS page ID in the LESS and HTML files
+- Updates the `.goTo-` in `./app.js` and in the Key Message HTML file
+- Renames the `./previews` folder for this Key Message
 
 ## 
 

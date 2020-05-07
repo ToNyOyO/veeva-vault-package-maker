@@ -95,13 +95,11 @@ function setup(cb) {
 /**********************************************************************************************************
  * add a new key message to the project using...
  *
- *    > gulp keymessage --pres
- *    > gulp keymessage --shared
  *    > gulp keymessage --new "key message name"
  *
  *  Does not check for existing files!
  */
-function keymessage(cb) {
+function keymessagev2(cb) {
 
     let error = false;
 
@@ -138,9 +136,7 @@ function keymessage(cb) {
         error = true;
     }
 
-    if (arg.pres === undefined && arg.shared === undefined && arg.new === undefined) {
-        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --pres');
-        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --shared');
+    if (arg.new === undefined) {
         console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --new "Key message name"');
         error = true;
     }
@@ -150,47 +146,58 @@ function keymessage(cb) {
         return;
     }
 
-    if (arg.pres !== undefined || arg.shared !== undefined) {
-        arg.new = config.presentationName;
-    }
     let newFileName = arg.new.replace(/ /g, "-");
-    let kmData = {};
-
-    if (arg.shared !== undefined) {
-        newFileName = newFileName + '-shared-resource';
-    }
+    let presFileName = config.presentationName.replace(/ /g, "-");
+    let sharedFileName = presFileName + '-shared-resource';
+    let presSharedName = config.presentationName;
+    let kmDataPres = {}, kmDataShared = {}, kmData = {};
+    let addPresShared = false;
 
     jsonfile.readFile('./keymessages.json', function (err, obj) {
         if (err) console.error(err);
 
-        // append new key message to obj
-        if (arg.shared !== undefined) {
-            obj[arg.new + ' shared resource'] = true;
-        } else
-            obj[arg.new] = true;
+        ///> add key message(s) to keymessages.json
 
-        // write out to file
-        jsonfile.writeFile('./keymessages.json', obj, { spaces: 4, EOL: '\r\n' }, function (err) {
-            if (err) console.error(err);
-        });
+        if (Object.keys(obj).length === 0 && obj.constructor === Object) {
 
-        if (arg.pres !== undefined) {
+            // append new key message to obj
+            obj[presSharedName] = true;
+            obj[presSharedName + ' shared resource'] = true;
+
+            // write out to file: pres
+            jsonfile.writeFile('./keymessages.json', obj, { spaces: 4, EOL: '\r\n' }, function (err) {
+                if (err) console.error(err);
+            });
+
             // create key message config file
-            kmData = templateKMdata('Presentation', '', '',
-                config.prefix, arg.new, config.externalId,
+            kmDataPres = templateKMdata('Presentation', '', '',
+                config.prefix, presSharedName, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, '');
-        }
 
-        if (arg.shared !== undefined) {
             // create key message config file
-            kmData = templateKMdata('Shared', '', '',
-                config.prefix, arg.new + ' shared resource', config.externalId,
+            kmDataShared = templateKMdata('Shared', '', '',
+                config.prefix, presSharedName + ' shared resource', config.externalId,
                 config.sharedResourceExternalId, config.productName,
-                config.countryName, newFileName);
-        }
+                config.countryName, sharedFileName);
 
-        if (arg.pres === undefined && arg.shared === undefined) {
+            addPresShared = true;
+        }
+    });
+
+    setTimeout(function(e) {
+        jsonfile.readFile('./keymessages.json', function (err, obj) {
+            if (err) console.error(err);
+
+            obj[arg.new] = true;
+
+            // write out to file: key message
+            jsonfile.writeFile('./keymessages.json', obj, { spaces: 4, EOL: '\r\n' }, function (err) {
+                if (err) console.error(err);
+            });
+
+            ///> create [keymessage].json file(s)
+
             // copy new template
             gulp.src('./templates/template-keymessage.html')
                 .pipe(inject.replace('ADD PAGE ID HERE', arg.new.toCamelCase()))
@@ -226,22 +233,32 @@ function keymessage(cb) {
                 config.prefix, arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
-        }
 
-        //  - create folder
-        gulp.src('*.*', {read: false})
-            .pipe(gulp.dest('./keymessages'));
 
-        setTimeout(function() {
-            //  - create the json file
-            jsonfile.writeFile('./keymessages/' + newFileName + '.json', kmData, { spaces: 4, EOL: '\r\n' }, function (err) {
-                if (err) console.error(err);
-            });
-        }, 250);
+            //  - create folder
+            gulp.src('*.*', {read: false})
+                .pipe(gulp.dest('./keymessages'));
 
-    });
+            setTimeout(function() {
+                //  - create the json file
+                jsonfile.writeFile('./keymessages/' + newFileName + '.json', kmData, { spaces: 4, EOL: '\r\n' }, function (err) {
+                    if (err) console.error(err);
+                });
 
-    cb();
+                if (addPresShared) {
+                    jsonfile.writeFile('./keymessages/' + presFileName + '.json', kmDataPres, { spaces: 4, EOL: '\r\n' }, function (err) {
+                        if (err) console.error(err);
+                    });
+                    jsonfile.writeFile('./keymessages/' + sharedFileName + '.json', kmDataShared, { spaces: 4, EOL: '\r\n' }, function (err) {
+                        if (err) console.error(err);
+                    });
+                }
+            }, 250);
+
+        });
+
+        cb();
+    }, 500);
 }
 
 
@@ -558,7 +575,7 @@ exports.default = defaultTask;
 
 exports.setup = setup;
 
-exports.keymessage = keymessage;
+exports.keymessage = keymessagev2;
 
 exports.link = externalLink;
 

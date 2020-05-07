@@ -349,24 +349,81 @@ function renameKeymessage(cb) {
 
     console.log("\x1b[31m%s\x1b[0m", "Rename is not implemented yet");
 
+    let oldFileName = arg.from.replace(/ /g, "-");
+    let newFileName = arg.to.replace(/ /g, "-");
+
     //@ToDo: update classname in LESS
     // replace patterns: /*** Homepage ***/ and #Homepage
 
     //@ToDo: rename LESS
 
+    /* PROPOSED METHOD:
+    gulp.src('./templates/shared/css/keymessages/' + oldFileName + '.less')
+        .pipe(inject.replace('*** ' + arg.from + ' ***', arg.to))
+        .pipe(inject.replace('#' + arg.from.toCamelCase(), arg.to.toCamelCase()))
+        .pipe(rename(newFileName + '.less'))
+        .pipe(gulp.dest('./shared/css/keymessages/'))
+        .on('end', function() {
+            gulp.src('./shared/css/keymessages/' + oldFileName + '.less', {read: false}).pipe(clean());
+        });
+     */
+
+
+
     //@ToDo: update default.less
     // replace pattern: @import "keymessages/Homepage.less"
 
+    /* PROPOSED METHOD:
+        // append new less template @import to default.less
+        gulp.src('./shared/css/default.less')
+            .pipe(inject.replace('@import "keymessages/' + oldFileName, '@import "keymessages/' + newFileName))
+            .pipe(gulp.dest('./shared/css/'));
+    */
+
+
+
     //@ToDo: update app.js
     // replace patterns: ('.goTo-Homepage') and ('Homepage.zip', '') and href = 'Homepage.html'
+
+    /* PROPOSED METHOD:
+    gulp.src('./shared/js/app.js')
+        .pipe(inject.replace("('.goTo-" + arg.from.toCamelCase() + "')", "('.goTo-" + arg.to.toCamelCase() + "')"))
+        .pipe(inject.replace("('" + arg.from.toCamelCase() + ".zip', '')", "('" + arg.to.toCamelCase() + ".zip', '')"))
+        .pipe(inject.replace("href = '" + arg.from.toCamelCase() + ".html'", "href = '" + arg.to.toCamelCase() + ".html'"))
+        .pipe(gulp.dest('./shared/js/'));
+    */
+
+
 
     //@ToDo: update classname in HTML
     // replace pattern: <body id="Homepage"> and goTo-Homepage
 
     //@ToDo: rename HTML
 
+    /* PROPOSED METHOD:
+    gulp.src('./' + oldFileName + '.html')
+        .pipe(inject.replace('<body id="Homepage">', '<body id="' + arg.to.toCamelCase() + '">'))
+        .pipe(inject.replace('goTo-' + arg.from.toCamelCase(), 'goTo-' + arg.to.toCamelCase()))
+        .pipe(rename(newFileName + '.html'))
+        .pipe(gulp.dest('./'))
+        .on('end', function() {
+            gulp.src('./' + oldFileName + '.html', {read: false}).pipe(clean());
+        });
+    */
+
+
+
     //@ToDo: update keymessages.json
     // replace pattern: "Homepage"
+
+    /* PROPOSED METHOD:
+    gulp.src('./keymessages.json')
+        .pipe(inject.replace('"' + arg.from.toCamelCase() + '":', '"' + arg.to.toCamelCase() + '":'))
+        .pipe(gulp.dest('./'));
+    */
+
+
+
 
     //@ToDo: update [key message].json
     // replace patterns: "name__v": "Homepage" and "slide.filename": "Homepage.zip"

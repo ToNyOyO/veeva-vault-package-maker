@@ -419,6 +419,11 @@ function renameKeymessage(cb) {
                 });
         });
 
+    // rename goTo refs in all html files
+    gulp.src('./*.html')
+        .pipe(inject.replace('goTo-' + oldMethodName, 'goTo-' + newMethodName))
+        .pipe(gulp.dest('./'));
+
     cb();
 }
 

@@ -16,9 +16,10 @@
 
 ## Upcoming changes...
 
-##### Cleaning user input:
+##### Rename key Message
 
-For safety sake, allow users to enter junk then clean it so it doesn't break anything. 
+- Rename Key Kessage and all associated files
+- `gulp rename --from "Key Message Name" --to "New Key Message Name"`
 
 ## Quick start...
 - Copy the files into a new project folder 
@@ -93,17 +94,28 @@ root/
 ```
 TASKS
 _________________________________________________________________________
+
 $ gulp                                        Default task that kicks off development mode
 $ gulp setup                                  Setup folders and config.json
 $ gulp keymessage --pres                      Create CLM Presentation json file
 $ gulp keymessage --shared                    Create CLM Pres shared resources json file
 $ gulp keymessage --new "Key Message name"    Add a Key Message to the project
+
+$ gulp dev                                    Stage task
+$ gulp build                                  Deploy task
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+UTILITY TASKS
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+$ gulp images                                 Process screen grabs into poster/thumbnail images
+
 $ gulp link --km "key-message-name.zip" 
             --method "nameOfMethod" 
             --id "123-presentation-ID"        Add a link to a slide in another Veeva presentation
-$ gulp images                                 Process screen grabs into poster/thumbnail images
-$ gulp dev                                    Stage task
-$ gulp build                                  Deploy task
+
+$ gulp rename --from "old name" 
+              --to "new name"                 Rename a Key Message and associated files
 ```
 
 ### In depth

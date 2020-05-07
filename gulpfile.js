@@ -136,18 +136,25 @@ function keymessage(cb) {
         error = true;
     }
 
+    if (arg.pres === undefined && arg.shared === undefined && arg.new === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --pres');
+        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --shared');
+        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp keymessage --new "Key message name"');
+        error = true;
+    }
+
     if (error) {
         cb();
         return;
     }
 
-    if (arg.pres || arg.shared) {
+    if (arg.pres !== undefined || arg.shared !== undefined) {
         arg.new = config.presentationName;
     }
     let newFileName = arg.new.replace(/ /g, "-");
     let kmData = {};
 
-    if (arg.shared) {
+    if (arg.shared !== undefined) {
         newFileName = newFileName + '-shared-resource';
     }
 
@@ -155,7 +162,7 @@ function keymessage(cb) {
         if (err) console.error(err);
 
         // append new key message to obj
-        if (arg.shared) {
+        if (arg.shared !== undefined) {
             obj[arg.new + ' shared resource'] = true;
         } else
             obj[arg.new] = true;
@@ -165,7 +172,7 @@ function keymessage(cb) {
             if (err) console.error(err);
         });
 
-        if (arg.pres) {
+        if (arg.pres !== undefined) {
             // create key message config file
             kmData = templateKMdata('Presentation', '', '',
                 config.prefix, arg.new, config.externalId,
@@ -173,7 +180,7 @@ function keymessage(cb) {
                 config.countryName, '');
         }
 
-        if (arg.shared) {
+        if (arg.shared !== undefined) {
             // create key message config file
             kmData = templateKMdata('Shared', '', '',
                 config.prefix, arg.new + ' shared resource', config.externalId,
@@ -181,7 +188,7 @@ function keymessage(cb) {
                 config.countryName, newFileName);
         }
 
-        if (!arg.pres && !arg.shared) {
+        if (arg.pres === undefined && arg.shared === undefined) {
             // copy new template
             gulp.src('./templates/template-keymessage.html')
                 .pipe(inject.replace('ADD PAGE ID HERE', arg.new.toCamelCase()))
@@ -316,6 +323,42 @@ function generateImages(cb) {
 
     gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'], {read: false})
         .pipe(clean());
+
+    cb();
+}
+
+
+function renameKeymessage(cb) {
+
+    let error = false;
+
+    if (arg.from === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", "requires '--from'");
+        error = true;
+    }
+    if (arg.to === undefined) {
+        console.log("\x1b[31m%s\x1b[0m", "requires '--to'");
+        error = true;
+    }
+
+    if (error) {
+        console.log("\x1b[31m%s\x1b[0m", 'EXAMPLE: > gulp rename --from "Key message name" --to "New key message name"');
+        cb();
+        return;
+    }
+
+    console.log("\x1b[31m%s\x1b[0m", "Rename is not implemented yet");
+
+    //@ToDo: update classname in LESS
+    //@ToDo: rename LESS
+    //@ToDo: update default.less
+    //@ToDo: update app.js
+    //@ToDo: update classname in HTML
+    //@ToDo: rename HTML
+    //@ToDo: update keymessages.json
+    //@ToDo: update [key message].json
+    //@ToDo: rename [new key message].json
+    //@ToDo: rename previews folder
 
     cb();
 }
@@ -457,6 +500,8 @@ exports.link = externalLink;
 
 exports.images = generateImages;
 
+exports.rename = renameKeymessage;
+
 exports.dev = dev;
 
 exports.build = build;
@@ -545,7 +590,7 @@ const arg = (argList => {
         if (opt === thisOpt) {
 
             // argument value
-            if (curOpt) arg[curOpt] = opt;
+            if (curOpt) arg[curOpt] = opt.replace(/([^a-z0-9_-]+)/gi, ' ').trim();
             curOpt = null;
 
         }

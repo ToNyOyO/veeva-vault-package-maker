@@ -350,14 +350,29 @@ function renameKeymessage(cb) {
     console.log("\x1b[31m%s\x1b[0m", "Rename is not implemented yet");
 
     //@ToDo: update classname in LESS
+    // replace patterns: /*** Homepage ***/ and #Homepage
+
     //@ToDo: rename LESS
+
     //@ToDo: update default.less
+    // replace pattern: @import "keymessages/Homepage.less"
+
     //@ToDo: update app.js
+    // replace patterns: ('.goTo-Homepage') and ('Homepage.zip', '') and href = 'Homepage.html'
+
     //@ToDo: update classname in HTML
+    // replace pattern: <body id="Homepage"> and goTo-Homepage
+
     //@ToDo: rename HTML
+
     //@ToDo: update keymessages.json
+    // replace pattern: "Homepage"
+
     //@ToDo: update [key message].json
+    // replace patterns: "name__v": "Homepage" and "slide.filename": "Homepage.zip"
+
     //@ToDo: rename [new key message].json
+
     //@ToDo: rename previews folder
 
     cb();

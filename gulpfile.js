@@ -540,7 +540,7 @@ function build(cb) {
             });
     }, 2250);
 
-    // make the Vault CM Loader csv
+    // make the Vault MC Loader csv
     let loadedKMs = require('./keymessages.json');
     let addHeaders = true;
     let csvData = '';
@@ -562,9 +562,9 @@ function build(cb) {
             }
         }
 
-        // save to ./build/vault-cm-loader.csv
+        // save to ./build/vault-mc-loader.csv
         (async () => {
-            await write('./build/vault-cm-loader.csv', csvData);
+            await write('./build/vault-mc-loader.csv', csvData);
         })();
     }, 1000);
 

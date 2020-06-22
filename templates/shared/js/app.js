@@ -17,6 +17,64 @@ $(function() {
     var popup = $('.popup-link');
     var popCloseBtn = $('.pop-close-button');
 
+
+    /******************************************************************************
+     * Nav highlighting
+     */
+
+    var pageName = '.goTo-' + $(location).attr('href').split('/').pop().split('.').shift().replace(/-/g, ' ').toCamelCase();
+
+    $('nav').find(pageName).each(function (e) {
+        $(this).addClass('active');
+        $(this).parent().parent().addClass('active');
+        $(this).parent().parent().siblings('a').first().addClass('active');
+    });
+
+
+    /******************************************************************************
+     * Cheeky page flip
+     */
+
+    if (!isPublished) {
+        var l = $('<input type="button" class="secret-button" id="secret-left" value="&lt;" />');
+        var r = $('<input type="button" class="secret-button" id="secret-right" value="&gt;" />');
+
+        $("nav").prepend(r);
+        $("nav").prepend(l);
+
+        var nextMenuItem = '', prevMenuItem = '';
+
+        $.getJSON( "../keymessages.json", function( data ) {
+
+            var items = [];
+
+            $.each( data, function( key, val ) {
+                items.push(key);
+            });
+
+            // exclude 0/1 for pres and shared res
+            for (var i=2; i<items.length; i++) {
+
+                if (pageName === '.goTo-' + items[i].replace(/-/g, ' ').toCamelCase()) {
+
+                    prevMenuItem = (i>2) ? items[i-1].replace(/ /g, '-') : '';
+                    nextMenuItem = (i<=items.length-1) ? items[i+1].replace(/ /g, '-') : '';
+                }
+            }
+
+            $('.secret-button').on('click', function (e) {
+
+                if ($(this).attr('id') === 'secret-left' && prevMenuItem !== '') {
+                    location.href = prevMenuItem + '.html';
+                } else
+                if ($(this).attr('id') === 'secret-right' && nextMenuItem !== '') {
+                    location.href = nextMenuItem + '.html';
+                }
+            });
+        });
+    }
+
+
     /******************************************************************************
      * References link (toggle)
      */
@@ -106,3 +164,11 @@ $(function() {
         });
     };
 })(jQuery);
+
+// convert string to camelcase
+String.prototype.toCamelCase = function() {
+    return this
+        .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/\^(.)/g, function($1) { return $1.toLowerCase(); });
+}

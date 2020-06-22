@@ -12,6 +12,7 @@
 //@ToDo: possibly import the menu from a file? https://github.com/reinerBa/gulp-tag-content-replace
 
 const gulp = require('gulp');
+const { series } = require('gulp');
 const fs = require('fs');
 const glob = require("glob");
 const path = require('path');
@@ -29,7 +30,7 @@ const inject = require('gulp-inject-string'); // append/prepend/wrap/before/afte
 const imageResize = require('gulp-image-resize');
 const clean = require('gulp-clean'); // delete files/folders
 
-const htmlFiles = glob.sync('./*.html');
+const htmlFiles = glob.sync('./source/*.html');
 let config = {};
 
 try {
@@ -37,7 +38,7 @@ try {
 } catch (ex) {
 
     (async () => {
-        await write('./config.json', "{}");
+        await write('./config.json', "{}", {}, function () {});
     })();
 
     console.log("\x1b[31m%s\x1b[0m", "\r\n>> Hey! You need to run 'gulp setup' then enter the Veeva required data in ./config.json\r\n");
@@ -46,10 +47,11 @@ try {
 function defaultTask(cb) {
     if ('presentationName' in config) {
         gulp.watch([
-            './shared/css/**/*.less',
-            './shared/js/*.js',
-            '!./shared/js/*.min.js'
-        ], dev).on('end', function() {console.log('test')});
+            './source/**/*.html',
+            './source/shared/less/**/*.less',
+            './source/shared/js/*.js',
+            '!./source/shared/js/*.min.js'
+        ], build).on('end', function() {console.log('test')});
     }
 
     cb();
@@ -77,16 +79,33 @@ function setup(cb) {
         .pipe(gulp.dest('./'));
 
     // copy shared folder structure
-    gulp.src(['./templates/shared/**', '!./templates/shared/css/keymessages/less-template-file.less'])
-        .pipe(gulp.dest('./shared'));
+    gulp.src(['./templates/shared/**', '!./templates/shared/less/keymessages/less-template-file.less'])
+        .pipe(gulp.dest('./source/shared'));
+
+    // create previews folder
+    gulp.src('*.*', {read: false})
+        .pipe(gulp.dest('./source/previews'));
+
+    // create fonts folder
+    gulp.src('*.*', {read: false})
+        .pipe(gulp.dest('./source/shared/fonts'));
+
+    // create partials folder
+    gulp.src('./templates/template-nav.html')
+        .pipe(rename('nav.html'))
+        .pipe(gulp.dest('./source/partials'));
 
     // create build folder
     gulp.src('*.*', {read: false})
         .pipe(gulp.dest('./build'));
 
-    // create previews folder
+    // create dist folder
     gulp.src('*.*', {read: false})
-        .pipe(gulp.dest('./previews'));
+        .pipe(gulp.dest('./dist'));
+
+    // create keymessages folder
+    gulp.src('*.*', {read: false})
+        .pipe(gulp.dest('./keymessages'));
 
     cb();
 }
@@ -200,44 +219,46 @@ function keymessagev2(cb) {
 
             // copy new template
             gulp.src('./templates/template-keymessage.html')
-                .pipe(inject.replace('ADD PAGE ID HERE', arg.new.toCamelCase()))
+                .pipe(inject.replace('ADD PAGE ID HERE', arg.new.replace(/-/g, " ").toCamelCase()))
                 .pipe(rename(newFileName + '.html'))
-                .pipe(gulp.dest('./'));
+                .pipe(gulp.dest('./source/'));
 
             // add new previews
             gulp.src('./templates/previews/*')
-                .pipe(gulp.dest('./previews/' + newFileName));
+                .pipe(gulp.dest('./source/previews/' + newFileName));
 
             // add new less template
-            gulp.src('./templates/shared/css/keymessages/less-template-file.less')
+            gulp.src('./templates/shared/less/keymessages/less-template-file.less')
                 .pipe(inject.replace('PAGE NAME', arg.new))
-                .pipe(inject.replace('PageName', arg.new.toCamelCase()))
+                .pipe(inject.replace('PageName', arg.new.replace(/-/g, " ").toCamelCase()))
                 .pipe(rename(newFileName + '.less'))
-                .pipe(gulp.dest('./shared/css/keymessages/'));
+                .pipe(gulp.dest('./source/shared/less/keymessages/'));
 
             // append new less template @import to default.less
-            gulp.src('./shared/css/default.less')
+            gulp.src('./source/shared/less/default.less')
                 .pipe(inject.append('\r\n@import "keymessages/' + newFileName + '.less";'))
-                .pipe(gulp.dest('./shared/css/'));
+                .pipe(gulp.dest('./source/shared/less/'));
 
             // insert JS link into app.js
             let js = fs.readFileSync('./templates/template-keymessage.js', 'utf8');
             js = js.replace(/FILENAME/g, newFileName).replace('METHODNAME', arg.new.replace(/-/g, " ").toCamelCase());
 
-            gulp.src('./shared/js/app.js')
+            gulp.src('./source/shared/js/app.js')
                 .pipe(inject.before('/** INSERT NEW KEYMESSAGE LINK HERE **/', js + '    '))
-                .pipe(gulp.dest('./shared/js/'));
+                .pipe(gulp.dest('./source/shared/js/'));
+
+            // insert reference into nav partial
+            if (!arg.notnav) {
+                gulp.src('./source/partials/nav.html')
+                    .pipe(inject.before('<!-- NEW ITEM -->', '\r\n    <li><a href="#" class="goTo-' + arg.new.replace(/-/g, " ").toCamelCase() + '">' + arg.new + '</a></li>\r\n'))
+                    .pipe(gulp.dest('./source/partials'));
+            }
 
             // create key message config file
             kmData = templateKMdata('Slide', '', '',
                 config.prefix, arg.new, config.externalId,
                 config.sharedResourceExternalId, config.productName,
                 config.countryName, newFileName);
-
-
-            //  - create folder
-            gulp.src('*.*', {read: false})
-                .pipe(gulp.dest('./keymessages'));
 
             setTimeout(function() {
                 //  - create the json file
@@ -299,21 +320,22 @@ function externalLink(cb) {
     let js = fs.readFileSync('./templates/template-link-to-pres.js', 'utf8');
     js = js.replace(/KEYMESSAGE/g, keyMessage).replace(/PRESENTATION/g, presID).replace('METHODNAME', methodName);
 
-    gulp.src('./shared/js/app.js')
+    gulp.src('./source/shared/js/app.js')
         .pipe(inject.before('/** INSERT LINK TO OTHER PRES HERE **/', js + '    '))
-        .pipe(gulp.dest('./shared/js/'));
+        .pipe(gulp.dest('./source/shared/js/'));
 
     cb();
 }
 
 
-function generateImages(cb) {
+function generatePreviews(cb) {
 
     // loop through previews folders
     // resize grab and rename as poster
     // copy and resize poster and rename as thumb
 
-    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'])
+    console.log('creating posters...');
+    gulp.src(['./source/previews/*/*.{PNG,png,JPG,jpg}', '!./source/previews/*/poster.png', '!./source/previews/*/thumb.png'])
         .pipe(imageResize({
             //imageMagick: true,
             width: 1024,
@@ -324,25 +346,33 @@ function generateImages(cb) {
         .pipe(rename(function (path){
             path.basename = 'poster';
         }))
-        .pipe(gulp.dest('./previews'));
+        .pipe(gulp.dest('./source/previews'))
+        .on('end', function() {
 
-    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'])
-        .pipe(imageResize({
-            //imageMagick: true,
-            width: 200,
-            height: 150,
-            quality: 3,
-            format: 'png'
-        }))
-        .pipe(rename(function (path){
-            path.basename = 'thumb';
-        }))
-        .pipe(gulp.dest('./previews'));
+            console.log('creating thumbs...');
+            gulp.src(['./source/previews/*/*.{PNG,png,JPG,jpg}', '!./source/previews/*/poster.png', '!./source/previews/*/thumb.png'])
+                .pipe(imageResize({
+                    //imageMagick: true,
+                    width: 200,
+                    height: 150,
+                    quality: 3,
+                    format: 'png'
+                }))
+                .pipe(rename(function (path){
+                    path.basename = 'thumb';
+                }))
+                .pipe(gulp.dest('./source/previews'))
+            .on('end', function () {
 
-    gulp.src(['./previews/*/*.{PNG,png,JPG,jpg}', '!./previews/*/poster.png', '!./previews/*/thumb.png'], {read: false})
-        .pipe(clean());
-
-    cb();
+                console.log('tidying up...');
+                gulp.src(['./source/previews/*/*.{PNG,png,JPG,jpg}', '!./source/previews/*/poster.png', '!./source/previews/*/thumb.png'], {read: false})
+                    .pipe(clean())
+                    .pipe(gulp.dest('./source/previews'))
+                    .on('end', function () {
+                        cb();
+                    });
+            })
+        });
 }
 
 
@@ -378,36 +408,47 @@ function renameKeymessage(cb) {
     let newMethodName = arg.to.replace(/-/g, " ").toCamelCase();
 
     // update LESS and rename file
-    gulp.src('./shared/css/keymessages/' + oldFileName + '.less')
+    gulp.src('./source/shared/less/keymessages/' + oldFileName + '.less')
         .pipe(inject.replace(arg.from, arg.to))
-        .pipe(inject.replace('#' + arg.from.toCamelCase(), arg.to.toCamelCase()))
+        .pipe(inject.replace('#' + arg.from.toCamelCase(), '#' + arg.to.toCamelCase()))
         .pipe(rename(newFileName + '.less'))
-        .pipe(gulp.dest('./shared/css/keymessages/'))
+        .pipe(gulp.dest('./source/shared/less/keymessages/'))
         .on('end', function() {
-            gulp.src('./shared/css/keymessages/' + oldFileName + '.less', {read: false}).pipe(clean());
+            gulp.src('./source/shared/less/keymessages/' + oldFileName + '.less', {read: false}).pipe(clean());
         });
 
     // update default.less
-    gulp.src('./shared/css/default.less')
+    gulp.src('./source/shared/less/default.less')
         .pipe(inject.replace('@import "keymessages/' + oldFileName, '@import "keymessages/' + newFileName))
-        .pipe(gulp.dest('./shared/css/'));
+        .pipe(gulp.dest('./source/shared/less/'));
 
     // update app.js
-    gulp.src('./shared/js/app.js')
+    gulp.src('./source/shared/js/app.js')
         .pipe(inject.replace("goTo-" + oldMethodName, "goTo-" + newMethodName))
         .pipe(inject.replace("'" + oldFileName + ".zip', ''", "'" + newFileName + ".zip', ''"))
         .pipe(inject.replace("href = '" + oldFileName + ".html'", "href = '" + newFileName + ".html'"))
-        .pipe(gulp.dest('./shared/js/'));
+        .pipe(gulp.dest('./source/shared/js/'));
 
-    // update classname + goTo in HTML and rename HTML
-    gulp.src('./' + oldFileName + '.html')
-        .pipe(inject.replace('<body id="' + arg.from.toCamelCase() + '">', '<body id="' + arg.to.toCamelCase() + '">'))
+    // rename goTo refs in all html files
+    gulp.src('./source/*.html')
         .pipe(inject.replace('goTo-' + oldMethodName, 'goTo-' + newMethodName))
-        .pipe(rename(newFileName + '.html'))
-        .pipe(gulp.dest('./'))
+        .pipe(gulp.dest('./source/'))
         .on('end', function() {
-            gulp.src('./' + oldFileName + '.html', {read: false}).pipe(clean());
+
+            // update classname + goTo in HTML and rename HTML
+            gulp.src('./source/' + oldFileName + '.html')
+                .pipe(inject.replace('<body id="' + arg.from.toCamelCase() + '">', '<body id="' + arg.to.toCamelCase() + '">'))
+                .pipe(rename(newFileName + '.html'))
+                .pipe(gulp.dest('./source/'))
+                .on('end', function() {
+                    gulp.src('./source/' + oldFileName + '.html', {read: false}).pipe(clean()); //ToDo: this line could be error
+                });
         });
+
+    // update goTo in NAV
+    gulp.src('./source/partials/nav.html')
+        .pipe(inject.replace('goTo-' + oldMethodName, 'goTo-' + newMethodName))
+        .pipe(gulp.dest('./source/partials'));
 
     // update keymessages.json
     gulp.src('./keymessages.json')
@@ -425,121 +466,228 @@ function renameKeymessage(cb) {
         });
 
     // rename previews folder
-    gulp.src('./previews/' + oldFileName)
+    gulp.src('./source/previews/' + oldFileName)
         .pipe(rename(newFileName))
-        .pipe(gulp.dest('./previews/'))
+        .pipe(gulp.dest('./source/previews/'))
         .on('end', function() {
-            gulp.src('./previews/' + oldFileName + '/*')
-                .pipe(gulp.dest('./previews/' + newFileName))
+            gulp.src('./source/previews/' + oldFileName + '/*')
+                .pipe(gulp.dest('./source/previews/' + newFileName))
                 .on('end', function() {
-                    gulp.src('./previews/' + oldFileName, {read: false}).pipe(clean());
+                    gulp.src('./source/previews/' + oldFileName, {read: false}).pipe(clean());
                 });
         });
 
-    // rename goTo refs in all html files
-    gulp.src('./*.html')
-        .pipe(inject.replace('goTo-' + oldMethodName, 'goTo-' + newMethodName))
-        .pipe(gulp.dest('./'));
-
     cb();
 }
 
-
-function dev(cb) {
-    gulp.src('./shared/css/default.less')
-        .pipe(sourcemaps.init())
-        .pipe(less())
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./shared/css'))
-        .on('end', function() {
-            gulp.src('./shared/css/default.css')
-                .pipe(cleanCSS({compatibility: 'ie8'}))
-                .pipe(rename(function (path) {path.extname = '.min.css'}))
-                .pipe(gulp.dest('./shared/css'));
-        });
-
-    gulp.src(['./shared/js/*.js', '!./shared/js/*.min.js'])
-        .pipe(uglify())
-        .pipe(rename(function (path) {path.extname = '.min.js'}))
-        .pipe(gulp.dest('./shared/js'));
-
-    cb();
-}
-
+/**********************************************************************************************************
+ * build the files ready for viewing in browser
+ *
+ *    > gulp build
+ *
+ * Does not check for existing files!
+ */
 function build(cb) {
 
-    // copy js
-    gulp.src(['./shared/js/app.js'])
-        .pipe(replace('isPublished = false', 'isPublished = true'))
-        .pipe(gulp.dest('./shared/js'))
+    let epoch = new Date().getTime();
+
+    gulp.src('./build/*', {read: false})
+        .pipe(clean())
+        .pipe(gulp.dest('./build'))
         .on('end', function () {
-            gulp.src(['./shared/js/*.js', '!./shared/js/*.min.js'])
-                .pipe(uglify())
-                .pipe(rename(function (path) {path.extname = '.min.js'}))
-                .pipe(gulp.dest('./shared/js'))
-                .on('end', function () {
-                    gulp.src('./shared/js/*.min.js')
-                        .pipe(gulp.dest('./build/TMP/shared/js'));
 
-                    // reset app.js isPublished var to false
-                    gulp.src(['./shared/js/app.js'])
-                        .pipe(replace('isPublished = true', 'isPublished = false'))
-                        .pipe(gulp.dest('./shared/js'))
+            gulp.src('./source/shared/less/default.less')
+                .pipe(sourcemaps.init())
+                .pipe(less())
+                .pipe(sourcemaps.write('./'))
+                .pipe(gulp.dest('./source/shared/less'))
+                .on('end', function() {
+
+                    console.log('> saving out min.css...');
+                    gulp.src('./source/shared/less/default.css')
+                        .pipe(cleanCSS({compatibility: 'ie8'}))
+                        .pipe(rename(function (path) {
+                            path.basename = 'default-' + epoch;
+                            path.extname = '.min.css'
+                        }))
+                        .pipe(gulp.dest('./build/shared/css'))
+                        .on('end', function() {
+
+                            console.log('> saving out min.js...');
+                            gulp.src(['./source/shared/js/*.js', '!./source/shared/js/app.js', '!./source/shared/js/*.min.js'])
+                                .pipe(uglify())
+                                .pipe(rename(function (path) {path.extname = '.min.js'}))
+                                .pipe(gulp.dest('./build/shared/js'))
+                                .on('end', function() {
+
+                                    console.log('> saving out app.min.js...');
+                                    gulp.src(['./source/shared/js/app.js', '!./source/shared/js/*.min.js'])
+                                        .pipe(uglify())
+                                        .pipe(rename(function (path) {
+                                            path.basename = 'app-' + epoch;
+                                            path.extname = '.min.js'
+                                        }))
+                                        .pipe(gulp.dest('./build/shared/js'))
+                                        .on('end', function() {
+
+                                            console.log('> copying other min.js files...');
+                                            // also copy any .min.js files from source
+                                            gulp.src('./source/shared/js/*.min.js')
+                                                .pipe(gulp.dest('./build/shared/js'))
+                                                .on('end', function() {
+
+                                                    console.log('> copying fonts...');
+                                                    // copy fonts
+                                                    gulp.src('./source/shared/fonts/**')
+                                                        .pipe(gulp.dest('./build/shared/fonts'))
+                                                        .on('end', function() {
+
+                                                            console.log('> copying images...');
+                                                            // copy images
+                                                            gulp.src('./source/shared/imgs/**')
+                                                                .pipe(gulp.dest('./build/shared/imgs'))
+                                                                .on('end', function() {
+
+                                                                    console.log('> inserting css/js into html files and copying...');
+
+                                                                    // insert JS link into app.js
+                                                                    let nav = fs.readFileSync('./source/partials/nav.html', 'utf8');
+                                                                    nav = nav.replace(/<!-- NEW ITEM -->/g, '');
+
+                                                                    // copy html files
+                                                                    gulp.src('./source/*.html')
+                                                                        .pipe(inject.replace('<!-- INSERT CSS HERE  -->', '<link rel="stylesheet" href="./shared/css/default-' + epoch + '.min.css">'))
+                                                                        .pipe(inject.replace('<!-- INSERT JS HERE  -->', '<script src="./shared/js/app-' + epoch + '.min.js"></script>'))
+                                                                        .pipe(inject.replace('<!-- INSERT NAV HERE  -->', nav + '    '))
+                                                                        .pipe(gulp.dest('./build'))
+                                                                        .on('end', function() {
+
+                                                                            cb();
+                                                                        });
+                                                                });
+                                                        });
+                                                });
+                                        });
+                                });
+                        });
                 });
-        })
-
-    //gulp.src('./shared/js/*.min.js')
-      //  .pipe(gulp.dest('./build/TMP/shared/js'));
-
-    // copy fonts
-    gulp.src('./shared/fonts/*')
-        .pipe(gulp.dest('./build/TMP/shared/fonts'));
-
-    // copy images
-    gulp.src('./shared/imgs/*')
-        .pipe(gulp.dest('./build/TMP/shared/imgs'));
-
-    // copy preview images
-    gulp.src('./previews/*/*')
-        .pipe(gulp.dest('./build/TMP/keymessages'));
-
-    // copy html files
-    setTimeout(function () {
-        htmlFiles.forEach(function (htmlFile) {
-            gulp.src(htmlFile)
-                .pipe(rename(function (path) {path.basename = 'index'}))
-                .pipe(gulp.dest('./build/TMP/keymessages/' + path.basename(htmlFile, '.html')));
         });
-    }, 500);
+}
 
-    // copy css
-    setTimeout(function () {
-        gulp.src('./shared/css/default.min.css')
-            .pipe(gulp.dest('./build/TMP/shared/css'));
-    }, 750);
+function setAsNotPublished(cb) {
 
-    // zip keymessages
-    setTimeout(function () {
-        htmlFiles.forEach(function (htmlFile) {
-            gulp.src( './build/TMP/keymessages/' + path.basename(htmlFile, '.html') + '/*' )
-                .pipe(zip(path.basename(htmlFile, '.html') + '.zip'))
-                .pipe(gulp.dest('./build'));
-        });
-    }, 1500);
+    gulp.src('./build/*', {read: false})
+        .pipe(clean())
+        .pipe(gulp.dest('./build'))
+        .on('end', function () {
 
-    // zip shared files
-    setTimeout(function () {
-        gulp.src('./build/TMP/shared/**')
-            .pipe(zip(config.presentationName.replace(/ /g, "-") + '-shared-resource.zip'))
-            .pipe(gulp.dest('./build'))
-            .on('end', function() {
-                setTimeout(function () {
-                    rimraf('./build/TMP', function () {  });
+            // rebuild  js for dist
+            gulp.src(['./source/shared/js/app.js'])
+                .pipe(replace('isPublished = true', 'isPublished = false'))
+                .pipe(gulp.dest('./source/shared/js'))
+                .on('end', function () {
+
                     cb();
-                }, 2000);
-            });
-    }, 2250);
+                });
+        });
+}
 
+function setAsPublished(cb) {
+
+    gulp.src('./build/*', {read: false})
+        .pipe(clean())
+        .pipe(gulp.dest('./build'))
+        .on('end', function () {
+
+            // rebuild  js for dist
+            gulp.src(['./source/shared/js/app.js'])
+                .pipe(replace('isPublished = false', 'isPublished = true'))
+                .pipe(gulp.dest('./source/shared/js'))
+                .on('end', function () {
+
+                    cb();
+                });
+        });
+}
+
+function copyCssToDist (cb) {
+    gulp.src('./build/shared/css/*')
+        .pipe(gulp.dest('./dist/TMP/shared/css'))
+        .on('end', function () {
+            cb();
+        });
+}
+
+function copyJsToDist (cb) {
+    gulp.src('./build/shared/js/*')
+        .pipe(gulp.dest('./dist/TMP/shared/js'))
+        .on('end', function () {
+            cb();
+        });
+}
+
+function copyFontsToDist (cb) {
+    gulp.src('./source/shared/fonts/**')
+        .pipe(gulp.dest('./dist/TMP/shared/fonts'))
+        .on('end', function () {
+            cb();
+        });
+}
+
+function copyImagesToDist (cb) {
+    gulp.src('./source/shared/imgs/**')
+        .pipe(gulp.dest('./dist/TMP/shared/imgs'))
+        .on('end', function () {
+            cb();
+        });
+}
+
+function copyPreviewsToDist (cb) {
+    gulp.src('./source/previews/*/*')
+        .pipe(gulp.dest('./dist/TMP/keymessages'))
+        .on('end', function () {
+            cb();
+        });
+}
+
+function copyHtmlToDist (cb) {
+    glob.sync('./build/*.html').forEach(function (htmlFile) {
+        gulp.src(htmlFile)
+            .pipe(rename(function (path) {path.basename = 'index'}))
+            .pipe(gulp.dest('./dist/TMP/keymessages/' + path.basename(htmlFile, '.html')));
+    });
+
+    setTimeout(function () {
+        cb();
+    }, 1200);
+}
+
+function zipKeyMessages (cb) {
+    htmlFiles.forEach(function (htmlFile) {
+        gulp.src( './dist/TMP/keymessages/' + path.basename(htmlFile, '.html') + '/*' )
+            .pipe(zip(path.basename(htmlFile, '.html') + '.zip'))
+            .pipe(gulp.dest('./dist'));
+    });
+
+    setTimeout(function () {
+        cb();
+    }, 1800);
+}
+
+function zipSharedFiles (cb) {
+    gulp.src('./dist/TMP/shared/**')
+        .pipe(zip(config.presentationName.replace(/ /g, "-") + '-shared-resource.zip'))
+        .pipe(gulp.dest('./dist'))
+        .on('end', function() {
+            setTimeout(function () {
+                rimraf('./dist/TMP', function () {  });
+
+                cb();
+            }, 2000);
+        });
+}
+
+function generateCsv (cb) {
     // make the Vault MC Loader csv
     let loadedKMs = require('./keymessages.json');
     let addHeaders = true;
@@ -564,11 +712,12 @@ function build(cb) {
 
         // save to ./build/vault-mc-loader.csv
         (async () => {
-            await write('./build/vault-mc-loader.csv', csvData);
+            await write('./dist/vault-mc-loader.csv', csvData);
         })();
-    }, 1000);
 
-    cb();
+        cb();
+
+    }, 1000);
 }
 
 exports.default = defaultTask;
@@ -579,13 +728,27 @@ exports.keymessage = keymessagev2;
 
 exports.link = externalLink;
 
-exports.images = generateImages;
+exports.previews = generatePreviews;
 
 exports.rename = renameKeymessage;
 
-exports.dev = dev;
-
 exports.build = build;
+
+exports.dist = series(
+    setAsPublished,
+    build,
+    copyCssToDist,
+    copyJsToDist,
+    copyFontsToDist,
+    copyImagesToDist,
+    copyPreviewsToDist,
+    copyHtmlToDist,
+    zipKeyMessages,
+    zipSharedFiles,
+    generateCsv,
+    setAsNotPublished,
+    build
+);
 
 
 // template data for key message file

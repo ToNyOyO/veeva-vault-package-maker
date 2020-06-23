@@ -754,7 +754,7 @@ exports.dist = series(
 // template data for key message file
 function templateKMdata(type, startDate, endDate, prefix, name_v, externalId, sharedResourceExternalId, productName, countryName, newFileName) {
 
-    let lifecycle = '', mediaType = '', presProductName = '', presCountry = '', presExternalId = '', training = '', hidden = '', shared = '', fieldsOnly = '';
+    let iosRes = '', lifecycle = '', mediaType = '', presProductName = '', presCountry = '', presExternalId = '', training = '', hidden = '', shared = '', fieldsOnly = '';
 
     prefix = prefix.toUpperCase();
 
@@ -774,6 +774,7 @@ function templateKMdata(type, startDate, endDate, prefix, name_v, externalId, sh
         sharedResourceExternalId = prefix + 'sr-' + sharedResourceExternalId;
         newFileName = newFileName + ".zip";
         mediaType = 'HTML';
+        iosRes = 'Scale To Fit';
     }
 
     if (type === 'Shared') {
@@ -805,6 +806,7 @@ function templateKMdata(type, startDate, endDate, prefix, name_v, externalId, sh
         "slide.crm_media_type__v" : mediaType,
         "slide.related_sub_pres__v" : "",
         "slide.related_shared_resource__v" : sharedResourceExternalId,
+        "slide.ios_resolution__v": iosRes,
         "slide.crm_disable_actions__v" : "",
         "slide.product__v.name__v" : productName,
         "slide.country__v.name__v" : countryName,

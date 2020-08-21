@@ -1,5 +1,6 @@
 *YOU SHOULD IGNORE THIS REPO AND USE v2 INSTEAD* 
-[https://github.com/ToNyOyO/veeva-vault-package-maker-v2]<https://github.com/ToNyOyO/veeva-vault-package-maker-v2>
+
+<https://github.com/ToNyOyO/veeva-vault-package-maker-v2>
 
 # Veeva Vault CLM Presentation tool 
 
